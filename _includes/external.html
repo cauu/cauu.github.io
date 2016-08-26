@@ -1,0 +1,132 @@
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+
+<script type="text/javascript" src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script type="text/javascript" src="/js/main.js"></script>
+
+{% if site.ga.id %}
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', '{{site.ga.id}}', '{{site.ga.host}}');
+    ga('send', 'pageview');
+</script>
+{% endif %}
+
+{% if page.douban %}
+<script>
+  function DoubanApi(){
+    this.defaults={
+      place: "douban",
+      user: "{{ site.social.douban.name }}",
+      api: "{{ site.social.douban.key }}",
+      book: [{status:"reading",maxnum:20},{status:"read",maxnum:100},{status:"wish",maxnum:100}],
+      bookreadingtitle: "在读", bookreadtitle:"读过",bookwishtitle:"想读"}
+  };
+
+  DoubanApi.prototype.make_api_url = function (type,user,key,status,begin,end) {
+    var url="http://api.douban.com/people/"+user+"/collection?cat="+type+"&start-index="+begin+"&max-results="+end+"&status="+status+"&alt=xd&callback=dbapi."+type+status+"_show"+"&apikey="+key;
+    return url;
+  };
+
+  DoubanApi.prototype.make_list_item = function (items) {
+    var html='';
+    $.each(items,function (i,item) {
+      html += '<li><a href="' + item.link 
+        + '" target="_blank"><img src="' + item.src
+        + '" alt="' + item.title + '" title="' 
+        + item.title + '" /></a></li>';
+    });
+    return html;
+  };
+
+  DoubanApi.prototype.parse_json = function (json) {
+    var items=[];
+    $.each(json.entry, function (i,item) {
+      var link = {}; 
+      link.title = item["db:subject"]["title"]["$t"]; 
+      link.link = item["db:subject"]["link"][1]["@href"];
+      link.src = item["db:subject"]["link"][2]["@href"];
+      items.push(link)
+    });
+    return items
+  };
+
+  DoubanApi.prototype.fix_num = function (num) {
+    var index = 1;
+    var fixnums = [];
+    if (50>num&&num>0) {
+      fixnums.push({begin:index,end:num});
+    } 
+    else {
+      while (num>0) {
+        fixnums.push({begin:index,end:index+49});
+        num-=50;
+        index+=50;
+      }
+    }
+    return fixnums;
+  };
+
+  DoubanApi.prototype.show = function(){
+    var books = [];
+    var tmpthis = this;
+    $.each(this.defaults.book, function (i, item) {
+      var fixnums = tmpthis.fix_num(item.maxnum);
+      books.push({ status:item.status,indexs:fixnums });
+    });
+    $.each(books, function (i,item) {
+      $.each(item.indexs, function (t,idx) {
+        tmpthis.appendScript(tmpthis.all_url("book", item.status, idx.begin, idx.end))
+      })
+    });
+  };
+
+  DoubanApi.prototype.appendScript = function (url){
+    if (url && url.length>0) {
+      $("<script/>").attr("src",url).attr("charset","utf-8").appendTo($("head")[0]);
+    }
+  };
+
+  DoubanApi.prototype.all_url = function (type,status,begin,end) {
+    if (end===0) return;
+    if (!this[type+status+"_show"]) {
+      this[type+status+"_show"] = function (json) {
+        var mainplace = $("#"+this.defaults.place);
+        if (mainplace.length === 0) {
+          mainplace=$('<div id="'+this.defaults.place+'"></div>').prependTo($("body"))
+        }
+        if ($("#"+type+status).length === 0) {
+          var title = this.defaults[type+status+"title"];
+          $('<p class="douban-title">'+title+'</p>').appendTo(mainplace);
+          $('<div id="'+type+status+'" class="douban-list"><ul></ul></div>').appendTo(mainplace);
+          $('<div class="clear"></div>').appendTo(mainplace);
+        }
+        $("#" + type + status +" > ul").append(this.make_list_item(this.parse_json(json)));
+      }
+    }
+    return this.make_api_url(type,this.defaults.user,this.defaults.api,status,begin,end)
+  };
+
+  var dbapi=new DoubanApi();
+
+  $(document).ready(function(){ dbapi.show() });
+</script>
+{% endif %}
+
+{%if page.tagcloud %}
+  <script src="/js/jquery.tagcloud.js" type="text/javascript" charset="utf-8"></script> 
+  <script language="javascript">
+  $.fn.tagcloud.defaults = {
+      size: {start: 1, end: 1, unit: 'em'},
+      color: {start: '#f8e0e6', end: '#BF1827'}
+  };
+
+  $(function () {
+      $('#tag_cloud a').tagcloud();
+  });
+  </script>
+{% endif %}
