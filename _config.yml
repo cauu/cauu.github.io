@@ -23,11 +23,15 @@ nav:
   - { title: 首页, description: 前往首页, url: '/' }
   - { title: 全部, description: 按时间轴浏览, url: '/timeline' }
   - { title: 分类, description: 按标签浏览, url: '/category' }
-  - { title: 留言, description: 留言板, url: '/comment' }
+  - { title: 项目, description: 项目和想法, url: '/project' }
   - { title: 读书, description: 豆瓣阅读, url: '/reading' }
   - { title: 关于, description: 关于我, url: '/about' }
   # - {title: Another Button, description: A button, url: 'http://example.com'}
 
+project: 
+  - { title: PokemonMax, description: 口袋妖怪GO精灵完美度计算器, url:  'http://www.poke-mon.cn' }
+  - { title: IUFind, description: 哎哟旅行(全网旅行结伴信息搜索工具), url:  'http://www.iufind.com' }
+  - { title: Spartan Wars, description: 在Tap4fun参与的第一个（也是最后一个）手游, url: 'http://www.tap4fun.com/spartan-wars/' }
 # Pagination
 gems: [jekyll-paginate]
 paginate: 10
