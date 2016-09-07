@@ -31,7 +31,7 @@ nav:
 project: 
   - { title: PokemonMax, description: 口袋妖怪GO精灵完美度计算器, url:  'http://www.poke-mon.cn' }
   - { title: IUFind, description: 哎哟旅行(全网旅行结伴信息搜索工具), url:  'http://www.iufind.com' }
-  - { title: Spartan Wars, description: 在Tap4fun参与的第一个（也是最后一个）手游, url: 'http://www.tap4fun.com/spartan-wars/' }
+  - { title: Spartan Wars, description: 在Tap4fun参与的第一个手游项目, url: 'http://www.tap4fun.com/spartan-wars/' }
 # Pagination
 gems: [jekyll-paginate]
 paginate: 10
