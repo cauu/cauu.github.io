@@ -1,6 +1,6 @@
 ---
 layout: post
-title: React pushState in wechat
+title: React-router和pushState在微信浏览器中的坑
 categories: 技术
 date: 2016-10-13
 ---
