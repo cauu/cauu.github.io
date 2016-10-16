@@ -181,7 +181,7 @@ setTimeout(function() {
 
 ```
 
-此时，不存在任何this绑定，this指向调用setTimeout的对象，在普通模式下是global变量，在strict模式下是undefined。这也就解释了为什么会出现this绑定丢失的情况。解决办法也简单：可以使用bind函数强制绑定this对象，也可以将this对象作为参数传递给对应的函数。这里推荐第一种方法：
+此时，不存在任何this绑定，``this``指向调用它的匿名函数对应的this，在普通模式下是global变量，在strict模式下是undefined。这也就解释了为什么会出现this绑定丢失的情况。解决办法也简单：可以使用bind函数强制绑定this对象，也可以将this对象作为参数传递给对应的函数。这里推荐第一种方法：
 
 ```
 
