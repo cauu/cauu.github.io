@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 浏览器兼容性问题Problem & Solution
+title: 浏览器兼容issues && solution
 categories: 
 date: 2017-08-01
 ---
