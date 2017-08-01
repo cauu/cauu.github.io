@@ -27,7 +27,6 @@ array.find|【部分国产安卓手机】|使用filter函数或for loop遍历
 array.includes|【部分国产安卓手机】|同上
 Promise|【部分国产安卓手机】【老版iphone】|全局引入bluebird或es6-promise模块
 {``}语法，如`${today}`|【部分安卓手机】|使用+实现字符串拼接
-
 onblur事件|iphone|添加不可见的mask模拟onblur事件
 
 #### 2. CSS兼容性问题
