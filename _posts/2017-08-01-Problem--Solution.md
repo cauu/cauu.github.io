@@ -12,54 +12,40 @@ web开发中，对ie的兼容曾经是无数前端工程师的切肤之痛，如
 
 首先是有关函数兼容性的问题(大部分转自我的同事[乔乐的博客](http://qiaolevip.iteye.com/blog/2306090)):
 
-####1. ES6中新的内置函数
+#### 1. ES6中新的内置函数
 
 由于babel默认不会对es6的内置函数添加polyfill，因此如果项目中用到了es6新的 字符串/数组/对象操作函数，那么在低版本的浏览器由于其内核没有实现这些函数，就会引发兼容性问题。
 
 上述问题包括但不限于以下函数：
 
 函数名|常见机型|解决方法
-
 :--|:--|:--|
-
 for...of|【部分安卓】|使用for循环或forEach代替
-
 str.startWith|【华为】【老版iphone】|使用字符串的indexOf代替
-
 str.search|【华为】【老版iphone】|使用indexOf代替
-
 array.find|【部分国产安卓手机】|使用filter函数或for loop遍历
-
 array.includes|【部分国产安卓手机】|同上
-
 Promise|【部分国产安卓手机】【老版iphone】|全局引入bluebird或es6-promise模块
-
-``语法，如`${today}`|【部分安卓手机】|使用+实现字符串拼接
+{``}语法，如`${today}`|【部分安卓手机】|使用+实现字符串拼接
 
 onblur事件|iphone|添加不可见的mask模拟onblur事件
 
-####2. CSS兼容性问题
+#### 2. CSS兼容性问题
 
 问题名|常见机型|解决方法
-
 :--|:--|:--|
-
 scale缩放动画|【安卓手机】|使用gif代替或添加webkit前缀
-
 (不算兼容性)transform导致position:absolute失效||删除父组件的transform属性
 
-####3. 其他兼容性问题
+#### 3. 其他兼容性问题
 
 
 问题名|常见机型|解决方法
-
 :--|:--|:--|
-
 window.open||部分浏览器会拦截popup，移动端更推荐window.location.href
-
 不支持localstorage|【点融APP】|使用cookie，object.toString来处理对象
 
-####4. 移动端兼容性问题之debug
+#### 4. 移动端兼容性问题之debug
 
 要避免兼容性问题，首先我们要做的就是尽量不用上面提到的那些函数，如果一定要使用也要做好Polyfill。
 
