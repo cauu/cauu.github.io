@@ -66,3 +66,9 @@ window.open||部分浏览器会拦截popup，移动端更推荐window.location.h
 
 4. 在chrome浏览器中进行测试
 
+****
+
+####8.11 Update
+
+另一个更简单的方案是使用[vConsole](https://github.com/WechatFE/vConsole)。通过引入这个库，我们就可以在手机浏览器上查看console output，相当方便。
+
