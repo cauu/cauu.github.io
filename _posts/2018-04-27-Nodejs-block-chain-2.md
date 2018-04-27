@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Nodejs block chain 2.md
+title: NodeJS撸一个简单的区块链（二）
 categories: 
 date: 2018-04-27
 ---
