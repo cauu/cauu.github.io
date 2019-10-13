@@ -1,0 +1,14 @@
+.post-listing {
+  &-item {
+    &-container {
+      border-bottom: 1px dotted #eee;
+    }
+    &-title {
+      color: #2a2935;
+      margin-top: 24px;
+      margin-bottom: 16px;
+    }
+    &-meta {
+    }
+  }
+}
