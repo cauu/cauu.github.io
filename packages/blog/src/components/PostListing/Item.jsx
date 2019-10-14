@@ -6,7 +6,10 @@ import {
   Desktop,
   Tablet,
   Mobile
-} from '../Responsive'
+} from '../Responsive';
+
+const prefix = 'post-listing-item'
+const prefixDesktop = `${prefix}-desktop`
 
 class PostListItem extends React.Component {
   static propTypes = {
@@ -19,9 +22,11 @@ class PostListItem extends React.Component {
     return (
       <React.Fragment>
         <Desktop>
-          <Link to={post.path} key={post.title}>
-            <h1>{post.title}</h1>
-          </Link>
+          <div className={prefixDesktop}>
+            <Link to={post.path} key={post.title}>
+              <h1>{post.title}</h1>
+            </Link>
+          </div>
         </Desktop>
 
         <Mobile>

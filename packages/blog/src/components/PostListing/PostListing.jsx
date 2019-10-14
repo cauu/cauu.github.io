@@ -1,6 +1,7 @@
 import React from "react";
 
 import PostListItem from './Item';
+import './PostListing.scss';
 
 class PostListing extends React.Component {
   getPostList() {

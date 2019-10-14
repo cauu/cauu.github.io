@@ -1,5 +1,7 @@
 .post-listing {
-  &-item {
+  &-item-desktop {
+    width: 50%;
+    float: left;
     &-container {
       border-bottom: 1px dotted #eee;
     }
@@ -7,8 +9,29 @@
       color: #2a2935;
       margin-top: 24px;
       margin-bottom: 16px;
+      a {
+        color: #2a2935;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
     &-meta {
+      span {
+        margin-right: 20px;
+        color: #757575;
+      }
+    }
+    &-content {
+      .btn-view-more {
+        color: #fff;
+        background-color: #ffc402;
+        border-color: #ffc402;
+        font-size: 9px;
+        line-height: 1.5;
+        border-radius: 3px;
+        padding: 1px 5px;
+      }
     }
   }
 }
