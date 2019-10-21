@@ -8,6 +8,8 @@ import {
   Mobile
 } from '../Responsive';
 
+import './style.scss';
+
 const prefix = 'post-listing-item'
 const prefixDesktop = `${prefix}-desktop`
 
