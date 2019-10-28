@@ -1,16 +1,32 @@
 import React from "react";
 import Helmet from "react-helmet";
 import { graphql } from "gatsby";
+
 import Layout from "../layout";
+import Header from '../components/Header';
 import PostListing from "../components/PostListing";
 import SEO from "../components/SEO/SEO";
 import config from "../../data/SiteConfig";
+
+// import '../styles/theme-next/main.styl'
+import '../styles/test.styl'
 
 class Index extends React.Component {
   render() {
     const postEdges = this.props.data.allMarkdownRemark.edges;
     return (
       <Layout>
+        <Header
+          title={{ text: '123', url: '123' }}
+          menus={
+            [
+              {
+                text: '123',
+                url: ''
+              }
+            ]
+          }
+        />
         <div className="index-container">
           <Helmet title={config.siteTitle} />
           <SEO />

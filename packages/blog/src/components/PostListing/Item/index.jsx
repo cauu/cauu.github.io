@@ -6,7 +6,7 @@ import {
   Desktop,
   Tablet,
   Mobile
-} from '../Responsive';
+} from '../../Responsive';
 
 import './style.scss';
 
