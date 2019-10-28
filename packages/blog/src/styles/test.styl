@@ -1,11 +1,21 @@
 config = json('./test.json', { hash: true })
 
-gethash(key)
-  return config[key]
+gethash(keyStr)
+  keys = split('.', keyStr)
+  curr = config
+  for k in keys
+    if curr[k]
+      curr = curr[k]
+    else
+      return ""
+  return curr
 
 add(k)
   return config[k]
 
+for c in gethash("color.blue")
+  c
+
 div
-  background: gethash("color")
+  background: gethash("color.red")
   border: 1px solid black

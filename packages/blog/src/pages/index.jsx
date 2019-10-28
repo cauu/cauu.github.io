@@ -8,8 +8,8 @@ import PostListing from "../components/PostListing";
 import SEO from "../components/SEO/SEO";
 import config from "../../data/SiteConfig";
 
-// import '../styles/theme-next/main.styl'
-import '../styles/test.styl'
+import '../styles/theme-next/main.styl'
+// import '../styles/test.styl'
 
 class Index extends React.Component {
   render() {

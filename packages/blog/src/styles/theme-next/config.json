@@ -17,7 +17,7 @@
     "icon": {
       "name": "user",
       "animated": false,
-      "color": "#808080"
+      "color": "'#808080'"
     },
     "copyright": null,
     "powered": {
