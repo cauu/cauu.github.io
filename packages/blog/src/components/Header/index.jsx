@@ -1,58 +1,60 @@
 import React from 'react';
 
 class Header extends React.Component {
+  renderMenus (menus, currPath) {
+    const menuCls = (menu) => currPath === menu.url ? `menu-item menu-item-active` : 'menu-item'
+
+    return (
+      <nav class="site-nav">
+        <ul id="menu" class="menu">
+          {
+            (menus || []).map((menu) => {
+              return (
+                <li className={menuCls(menu)}>
+                  <a href={menu.url} rel="section">
+                    <i class="fa fa-fw fa-bullhorn"></i>
+                    {menu.text}
+                  </a>
+                </li>
+              )
+            })
+          }
+        </ul>
+      </nav>
+    )
+  }
+
   render () {
     const { title = {}, subTitle = {}, menus, rss } = this.props
 
     return (
-      <header className="header">
-        <div className="banner"></div>
-        <div className="header-outer">
-          <div className="header-title">
-            <h1 class="logo-wrap">
-              <a href={title.url} class="logo">
-                {title.text}
-              </a>
-            </h1>
-            {
-              subTitle &&
-                <h2 class="subtitle-wrap">
-                  <a href={subTitle.url} class="subtitle">
-                    {subTitle.text}
-                  </a>
-                </h2>
-            }
-          </div>
+      <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+        <div class="header-inner">
+          <div class="site-brand-container">
+            <div class="site-meta">
+              <div>
+                <a href="/" class="brand" rel="start">
+                  <span class="logo-line-before"><i></i></span>
+                  <span class="site-title">NexT</span>
+                  <span class="logo-line-after"><i></i></span>
+                </a>
+              </div>
+              <h1 class="site-subtitle" itemprop="description">Theme for Hexo</h1>
+            </div>
 
-
-          <div class="header-inner" class="inner">
-            <nav id="main-nav">
-              <a id="main-nav-toggle" class="nav-icon"></a>
-              {
-                (menus || []).map(({ url, text }) => {
-                  return (
-                    <a class="main-nav-link" href={url}>
-                      {text}
-                    </a>
-                  )
-                })
-              }
-            </nav>
-            <nav id="sub-nav">
-              {
-                rss && (
-                  <a id="nav-rss-link" class="nav-icon" href={rss.url} title={rss.text}></a>
-                )
-              }
-              {/* <a id="nav-search-btn" class="nav-icon" title="<%= __('search') %>"></a> */}
-            </nav>
-            <div id="search-form-wrap">
+            <div class="site-nav-toggle">
+              <div class="toggle" aria-label="Toggle navigation bar">
+                <span class="toggle-line toggle-line-first"></span>
+                <span class="toggle-line toggle-line-middle"></span>
+                <span class="toggle-line toggle-line-last"></span>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
-    )
-  }
+
+          {this.renderMenus(menus)}
+      </div>
+    </header>
+  )}
 }
 
 export default Header
