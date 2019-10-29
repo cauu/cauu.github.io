@@ -5,19 +5,19 @@ class Header extends React.Component {
     const { title = {}, subTitle = {}, menus, rss } = this.props
 
     return (
-      <header id="header">
-        <div id="banner"></div>
-        <div id="header-outer" class="outer">
-          <div id="header-title" class="inner">
-            <h1 id="logo-wrap">
-              <a href={title.url} id="logo">
+      <header className="header">
+        <div className="banner"></div>
+        <div className="header-outer">
+          <div className="header-title">
+            <h1 class="logo-wrap">
+              <a href={title.url} class="logo">
                 {title.text}
               </a>
             </h1>
             {
               subTitle &&
-                <h2 id="subtitle-wrap">
-                  <a href={subTitle.url} id="subtitle">
+                <h2 class="subtitle-wrap">
+                  <a href={subTitle.url} class="subtitle">
                     {subTitle.text}
                   </a>
                 </h2>
@@ -25,7 +25,7 @@ class Header extends React.Component {
           </div>
 
 
-          <div id="header-inner" class="inner">
+          <div class="header-inner" class="inner">
             <nav id="main-nav">
               <a id="main-nav-toggle" class="nav-icon"></a>
               {

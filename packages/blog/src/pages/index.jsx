@@ -22,7 +22,7 @@ class Index extends React.Component {
             [
               {
                 text: '123',
-                url: ''
+                url: '123'
               }
             ]
           }
