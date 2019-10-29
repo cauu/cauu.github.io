@@ -35,11 +35,11 @@ class Header extends React.Component {
               <div>
                 <a href="/" class="brand" rel="start">
                   <span class="logo-line-before"><i></i></span>
-                  <span class="site-title">NexT</span>
+                  <span class="site-title">{title}</span>
                   <span class="logo-line-after"><i></i></span>
                 </a>
               </div>
-              <h1 class="site-subtitle" itemprop="description">Theme for Hexo</h1>
+              <h1 class="site-subtitle" itemprop="description">{subTitle}</h1>
             </div>
 
             <div class="site-nav-toggle">
