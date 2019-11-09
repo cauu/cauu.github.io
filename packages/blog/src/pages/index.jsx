@@ -4,16 +4,15 @@ import { graphql } from "gatsby";
 
 import Layout from "../layout";
 import Header from '../components/Header';
+import ContentWrapper from '../components/ContentWrapper'
 import PostListing from "../components/PostListing";
 import SEO from "../components/SEO/SEO";
 import config from "../../data/SiteConfig";
 
-import '../styles/theme-next/main.styl'
-// import '../styles/test.styl'
-
 class Index extends React.Component {
   render() {
     const postEdges = this.props.data.allMarkdownRemark.edges;
+
     return (
       <Layout>
         <Header
@@ -27,11 +26,12 @@ class Index extends React.Component {
             ]
           }
         />
-        <div className="index-container">
+
+        <ContentWrapper>
           <Helmet title={config.siteTitle} />
           <SEO />
           <PostListing postEdges={postEdges} />
-        </div>
+        </ContentWrapper>
       </Layout>
     );
   }

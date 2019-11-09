@@ -2,16 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'gatsby';
 
-import {
-  Desktop,
-  Tablet,
-  Mobile
-} from '../../Responsive';
+import { formatDate } from '../../../utils'
 
 import './style.scss';
-
-const prefix = 'post-listing-item'
-const prefixDesktop = `${prefix}-desktop`
 
 class PostListItem extends React.Component {
   static propTypes = {
@@ -21,24 +14,41 @@ class PostListItem extends React.Component {
   render () {
     const { post } = this.props
 
+    const { date, excerpt } = post
+
     return (
-      <React.Fragment>
-        <Desktop>
-          <div className={prefixDesktop}>
-            <Link to={post.path} key={post.title}>
-              <h1>{post.title}</h1>
-            </Link>
+      <article className="post-block home">
+        <header className="post-header">
+          <h1 className="post-title">
+            {post.title}
+          </h1>
+          <div className="post-meta">
+            <span className="post-meta-item">
+              <span className="post-meta-item-icon">
+              </span>
+              <span className= "post-meta-item-text">
+                Posted on
+                &nbsp;
+              </span>
+              <time title={date}>
+                {formatDate(date)}
+              </time>
+            </span>
           </div>
-        </Desktop>
+        </header>
 
-        <Mobile>
-         <div>mobile</div>
-        </Mobile>
+        <div className="post-body">
+          <p>
+            {excerpt}
+          </p>
+        </div>
 
-        <Tablet>
-          <div>tablet</div>
-        </Tablet>
-      </React.Fragment>
+        <div style={{ 'text-align': 'right' }}>
+          <Link to={post.path}>
+            继续阅读
+          </Link>
+        </div>
+      </article>
     )
   }
 }

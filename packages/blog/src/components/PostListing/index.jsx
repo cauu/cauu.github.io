@@ -23,7 +23,7 @@ class PostListing extends React.Component {
   render() {
     const postList = this.getPostList();
     return (
-      <div>
+      <div className="posts-expand">
         {/* Your post list here. */
           postList.map((post, idx) => <PostListItem post={post} key={idx} />)
         }

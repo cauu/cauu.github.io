@@ -25,7 +25,7 @@ class Header extends React.Component {
   }
 
   render () {
-    const { title = {}, subTitle = {}, menus, rss } = this.props
+    const { title, subTitle, menus, rss } = this.props
 
     return (
       <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
@@ -33,13 +33,19 @@ class Header extends React.Component {
           <div class="site-brand-container">
             <div class="site-meta">
               <div>
-                <a href="/" class="brand" rel="start">
+              {
+                title && <a href={title.url} class="brand" rel="start">
                   <span class="logo-line-before"><i></i></span>
-                  <span class="site-title">{title}</span>
+                  <span class="site-title">{title.text}</span>
                   <span class="logo-line-after"><i></i></span>
                 </a>
+              }
               </div>
-              <h1 class="site-subtitle" itemprop="description">{subTitle}</h1>
+              {
+                subTitle && <h1 class="site-subtitle" itemprop="description">
+                  {subTitle.text}
+                </h1>
+              }
             </div>
 
             <div class="site-nav-toggle">
