@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/my_favicon.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/my_favicon.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="刚使用nodejs编程是痛苦的，这痛苦并非源自对新的知识点学习的过程，而是来自于新的思维模式与惯有的思维模式之间的冲突，具体来说，就是我们个体同步的思考方式和异步的编程方式之间的碰撞。我们只有一个大脑，因此当我们处理问题时，无论是什么样的问题，我们都会将其拆分成1、2、3步（某些大牛除外），一步一步进行处理，这就造成了在我们内心中，希望我们自己写代码时也能遵循这样的方式，代码从逻辑上来说尽量同步；">
+<meta name="keywords" content="promise,javascript,nodejs">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Promise">
+<meta property="og:url" content="http://cauu.online/技术/2015-10-15-promise/index.html">
+<meta property="og:site_name" content="Martin&#39;s Dean">
+<meta property="og:description" content="刚使用nodejs编程是痛苦的，这痛苦并非源自对新的知识点学习的过程，而是来自于新的思维模式与惯有的思维模式之间的冲突，具体来说，就是我们个体同步的思考方式和异步的编程方式之间的碰撞。我们只有一个大脑，因此当我们处理问题时，无论是什么样的问题，我们都会将其拆分成1、2、3步（某些大牛除外），一步一步进行处理，这就造成了在我们内心中，希望我们自己写代码时也能遵循这样的方式，代码从逻辑上来说尽量同步；">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-08T03:33:08.860Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解Promise">
+<meta name="twitter:description" content="刚使用nodejs编程是痛苦的，这痛苦并非源自对新的知识点学习的过程，而是来自于新的思维模式与惯有的思维模式之间的冲突，具体来说，就是我们个体同步的思考方式和异步的编程方式之间的碰撞。我们只有一个大脑，因此当我们处理问题时，无论是什么样的问题，我们都会将其拆分成1、2、3步（某些大牛除外），一步一步进行处理，这就造成了在我们内心中，希望我们自己写代码时也能遵循这样的方式，代码从逻辑上来说尽量同步；">
+
+
+
+
+
+
+  <link rel="canonical" href="http://cauu.online/技术/2015-10-15-promise/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>深入理解Promise | Martin's Dean</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-100475240-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-100475240-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <a href="https://github.com/cauu" target="_blank" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Martin's Dean</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Cast a cold eye, on Life on Death, Horseman, 123!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories menu-item-active">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">1</span>
+      </a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">26</span>
+      </a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-timelines">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>时间轴</a>
+</li>
+
+      
+
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauu.online/技术/2015-10-15-promise/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Martin Cai">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/my_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Martin's Dean">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">深入理解Promise</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-10-14T23:00:00+00:00">2015-10-15</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                <span title="字数统计">5k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                <span title="阅读时长">0:05</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>刚使用nodejs编程是痛苦的，这痛苦并非源自对新的知识点学习的过程，而是来自于新的思维模式与惯有的思维模式之间的冲突，具体来说，就是我们个体同步的思考方式和异步的编程方式之间的碰撞。我们只有一个大脑，因此当我们处理问题时，无论是什么样的问题，我们都会将其拆分成1、2、3步（某些大牛除外），一步一步进行处理，这就造成了在我们内心中，希望我们自己写代码时也能遵循这样的方式，代码从逻辑上来说尽量同步；但另一方面，这个世界上，并不只有个体存在，更多时候，我们需要处理的是群体间的事务，当遇到个体无法处理的事务，我们希望能将其分发给不同的对象，通过消息通知/回调的方式，来追踪事务的进展 。  </p>
+<a id="more"></a>
+<p>例如，当我们需要采购一批货物，我们需要将采购的流程拆分成经理注册、财务审批、采购员采购等小规模的业务分发给经理、财务、采购员，当经理注册完成后通知财务，财务才能审批；财务审批完之后又要通知采购员去进行采购。是不是很眼熟？这就是现实生活中的回调模型。这样的模型，实际上是一个同步模型，而我们在node中又不得不采用回调的形式来实现它，这就是问题的结症所在。什么意思呢？如果采用同步的表达方式，上面的例子可以表示成:  </p>
+<pre><code>managerRegister();  
+/* wait for a while */      
+financeCheck();  
+/* wait for a while */  
+purchase();  
+</code></pre><p>每一步都需要等待上一步执行完毕之后才能执行，然后，到了node中，由于js引擎单线程的特性，因此一般来说，我们不允许某一步的存在阻塞了线程，于是乎，上面的模型便成了这个样子:  </p>
+<pre><code>/* Do some thing */  
+managerRegister(function(result) {  
+financeCheck(function(result) {  
+        purchase();  
+    });  
+});  
+/* Do some thing else */  
+</code></pre><p>回调本身并不是异步的，你甚至完全可以用它来编写所有的同步代码。它存在的意义是为异步的操作增加了同步的约束，所以本质上，它表达的是一种同步的思想。这就是痛苦的根源: 在node中，我们需要连篇累牍的使用这种形式去表达同步的过程。<br>因此我们需要有另一种形式，将我们从这种对立的思考和实现之间解脱出来。最理想的方案肯定是显示同步，隐式异步，即用同步的代码编写异步的逻辑，然后到目前为止，还没有很好的实现可供选择。退而求其次，我们选择promise。</p>
+<p>###1. 同步(synchronize)，异步(asynchronize)，并发(concurrency), 并行(parallelism)  </p>
+<p>要理解promise，首先我们要搞清楚同步、异步、并发、并行这四个概念（说实话在此之前我也没搞清楚）。同步指的是程序是顺序执行，每一步都需要等待前一步执行完毕才能往下执行。异步指的是程序并非顺序执行，当某一事件在执行时，程序可以继续做其他事，而不必等待该事件执行完毕。异步是我们希望得到的结果，然而如何实现程序的异步执行？这就要用到我们的并发和并行了。当我们的程序允许多线程执行时，我们可以采用并行的方式来实现异步操作：遇到需要异步执行的程序片段，新开一个线程来执行该程序片段，主线程继续往下执行。如果我们的程序运行环境不允许多线程呢(比如node)？那我们可以选择并发的方式来实现，下面用一个例子来说明并发这个概念:<br>假设我们的程序的执行过程中遇到两个任务A，B，其中A可分为A1，A2，A3，B可以分为B1，B2，A2和A3需要等待A1执行完毕，然而B的执行并不依赖于A，采用并发的方式，我们可能就会得到这样一个结果： </p>
+<blockquote>
+<p>A1<br>B1(不必等待A执行完毕）<br>A2(A1执行完毕）<br>A3<br>B2  </p>
+</blockquote>
+<p>虽然同一时间只能有一个程序片段在执行，但它实现了在不同的任务之间的轮转，使得我们不必等待某一任务执行完毕，这就是所谓的并发。大量的采用并发也是node得以发扬光大的基石。</p>
+<hr>
+<p>###2. ‘恶魔金字塔’并非问题的本质?</p>
+<p>接触node编程不久，我们就会遇到‘回调金字塔’的问题。在各种各样关于node的参考资料中，我们都可以看到不同作者对“邪恶”的回调金字塔的大肆渲染，仿佛这就是问题的本质。诚然，“邪恶金字塔”使代码的可读性严重下降，使得后续的维护难上加难，但一段逻辑严谨的回调嵌套的运行效率还高于其对应的promise实现，如果问题仅限于此，那么仅仅是缩进的“问题”为何值得那么多人大书特书？实际上，真正的问题远比这深的多。<br>首先我们先看一个简单的代码片段:  </p>
+<pre><code>callBeforeAyncCalls(
+    function() { 
+     someAyncCalls(function() { 
+        callAfterAyncCalls(
+             //More nested calls....
+            )
+        }
+    }
+)
+</code></pre><p>可以看到，在上面的回调嵌套中，程序自然而然被分成了三个部分:someAyncCalls之前的部分，someAyncCalls和它之后的部分。下面我们思考一个问题：  </p>
+<p><strong>你是否拥有someAsyncCalls的控制权?</strong></p>
+<p>遗憾的是，大部分时候答案都是否。如今，开发一个程序需要用到太多的第三方控件、库，因此不可避免的会调用很多并非由我们开发的函数，当我们将我们的代码作为回调函数传给这些函数时，我们不禁要问：这些回调函数能被正常的调用吗？我们能够信任这些第三方的函数吗？<br>你可能会问，不就是调用一个回调函数吗？还需要信任哪些内容？不管你是否注意到，你已经隐式的信任了这些内容：[1]  </p>
+<pre><code>1. 不要过早调用我的回调函数
+2. 不要太晚调用我的回调
+3. 不要过少的调用回调
+4. 不要过多的调用回调
+5. 将必要的参数正确的传给我的回调函数
+6. 如果回调失败，请保证能够让我知道    
+</code></pre><p>这一大堆信任问题正是结症所在。下面举一个简单的例子：<br>你开发了一个购物网站，当用户购物完成之后，你需要调用一个第三方的支付网站验证用户的支付信息(checkUserInfo)，验证完成之后你再通过回调调用支付接口(chargeCreditCard)，大部分时候，perfect！但是你对checkUserInfo这个函数的实现并不了解，某次一个粗心的程序员将其中一段callUserCallBack函数的调用次数改为了三次，这意味着什么呢？意味你的用户在一次支付流程中支付了三倍的费用！幸运的是，你发现了这个问题，你赶紧将多余的钱退回给客户，然后找到这个api的开发者，告诉他们，你们的函数出错了！他们赶紧改掉BUG，并告诉你，现在你可以将api升级到2.0版，放心的使用我们的api了。现在，你还能放心吗？<br>当然，现实生活中我们很少会遇到这样极端的情况，但这种我们永远无法保证第三方的函数都是完美的，因此我们需要竭尽全力去避免这种无法掌控的情况。<br>怎么做呢？<br>答案就是promise。  </p>
+<hr>
+<p>###3. Promise如何解决上面的问题？<br>在回答这个问题之前，我们首先看一个现实生活中的场景：<br>你去一家快餐店吃饭，走进店内，首先来到吧台点了一分大娘水饺（好吧这家快餐店叫面点王），付款后，收银员并不会立马给你端一碗水饺（水饺肯定不新鲜），也不会让你在吧台等着厨师把煮熟的水饺端给你（这是同步的做法）。正确的做法是，收银员会给你一张小票（你的promise），上面有你的订单号123，你拿着小票随便找一个位置坐下就等着服务员叫号（回调promise），过了十分钟，当你听到服务员终于叫到123号时，便拿着你的小票去getADaNiangShuiJiao()（调用你的回调函数）。实际上，你的小票就是现实生活中的promise，水饺做好后，服务员并不会直接把水饺端给你，他只会回调到你的小票，然后等着你用你的小票去领取你的水饺（resolve水饺）。下面用代码的形式来进一步说明： </p>
+<pre><code>function makeOrderPromise(order) {  
+    var tip = new tip();  
+    makeOrder(order, function(err, result) 
+    {  
+        if(err) tip.reject(result);  
+        else tip.resolve(result);    
+    });  
+}  
+makeOrderPromise(&apos;ShuiJiao&apos;).then(  
+    function() {  
+        getShuiJiao();  
+    },  
+    function() {  
+        rejectedByWaiters();  
+    }  
+)   
+</code></pre><p>可以看到，promise在“我”和“服务员”之间插入了一个中间层(小票），有了它之后，我不再直接向服务员注册回调函数，而是告诉我的小票：我需要一碗水饺，当我的小票被服务员回调之后，我再通过解析我的小票来获得我的水饺。<br>现在我们再回过头来看我们上面提的那6个问题，promise是如何解决的：  </p>
+<pre><code>1. 不要过早调用我的回调函数： 只有当原函数被正确执行时，才会调用回调。因此不存在“过早”和“过晚”这样的情况。
+2. 不要太晚调用我的回调：
+3. 不要过少的调用回调：Promise被resolve的次数&lt;=1次，因此过少就是说Promise没有调用回调。事实上，Promise并不保证总是被resolve，但我们可以通过手动添加一个timeout函数来保证超时的promise可以返回error。
+4. 不要过多的调用回调：根据Promise/A+规范，promise只会被resolve一次。
+5. 将必要的参数正确的传给我的回调函数：Promise允许状态和参数的传递。
+6. 如果回调失败，请保证能够让我知道：完善的promise chain可以保证错误可以被catch到。
+</code></pre><hr>
+<p>###4. Promise的具体实现/使用<br>使用Promise之前，我们需要将我们的函数“Promise化”。然而，既然已经到了这里，事实上“Promisify”已经是一件水到渠成的事了，我们要做的仅仅是在我们的函数和它的回调之间插入一张“小票”，就是我们的Promise。换句话说，函数回调时并不会直接回调给我们的回调函数：它首先通知Promise，再由Promise来调用我们的回调函数。下面用一个简单的例子说明一下：</p>
+<pre><code>//对正常的getSomeStuff函数的调用
+getSomeStuff(params, function(err, value) {
+    if(err) console.log(err);
+    else return value;
+});
+//Promisify后的getSomeStuff函数
+getSomeStuffAsync(params) {
+    return new Promise(function(resolve,reject) {
+    getSomeStuff(params, function(err, value) {
+            if(err) return reject(err);
+            else return resolve(value);
+        });
+    });
+}
+</code></pre><hr>
+<p>说了这么多，实际上都是我自己对下面参考资料一些粗浅的理解和总结，权当是抛砖引玉。欢迎大家猛烈的鞭挞。</p>
+<hr>
+<p>﻿参考：<br>【1】<a href="http://blog.getify.com/promises-part-1/" target="_blank" rel="noopener">Nodejs Promise的本质</a><br>【2】<a href="http://mp.weixin.qq.com/s?__biz=MzIyMzAwNzExNg==&amp;mid=209354478&amp;idx=1&amp;sn=edd70e826b6f9e8a570024f431c5f7fe#rd" target="_blank" rel="noopener">关于Promise你理解了多少</a><br>【3】<a href="http://segmentfault.com/a/1190000002452115" target="_blank" rel="noopener">Promise/A+规范</a><br>【4】<a href="https://cnodejs.org/topic/560dbc826a1ed28204a1e7de" target="_blank" rel="noopener">NodeJS最新技术站之Promise篇</a><br>【5】<a href="http://stackoverflow.com/questions/22519784/how-do-i-convert-an-existing-callback-api-to-promises" target="_blank" rel="noopener">How can I convert a existing API to promises</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Martin Cai</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://cauu.online/技术/2015-10-15-promise/" title="深入理解Promise">http://cauu.online/技术/2015-10-15-promise/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/promise/" rel="tag"># promise</a>
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+            <a href="/tags/nodejs/" rel="tag"># nodejs</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/技术/2016-09-07-test-on-mocha/" rel="prev" title="Mocha单元测试入门">
+                Mocha单元测试入门 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/my_avatar.png" alt="Martin Cai">
+            
+              <p class="site-author-name" itemprop="name">Martin Cai</p>
+              <p class="site-description motion-element" itemprop="description">Coding, Travelling, Reading and Enjoying</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                    <span class="site-state-item-count">1</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">26</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/cauu" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:cauu@163.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Martin Cai</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">90k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点总阅读时长">1:30</span>
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动 v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" rel="external nofollow" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/reading_progress/reading_progress.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <script src="/lib/bookmark/bookmark.min.js?v=1.0"></script>
+  <script type="text/javascript">
+  
+    bookmark.scrollToMark('auto', "#more");
+  
+  </script>
+
+
+</body>
+</html>

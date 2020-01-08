@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/my_favicon.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/my_favicon.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="最近区块链概念大火，炒币、智能合约、闪电链等等各种新概念层出不穷，看的我们眼花缭乱。站在大时代的风口上，前端工程师难道就只能选择观望吗？不要忘了我们有NodeJS这个利器。下面就跟着我一起通过NodeJS来揭开区块链世界的神秘面纱吧。">
+<meta name="keywords" content="javascript,nodejs,blockchain">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nodejs撸一个简单的区块链（一）">
+<meta property="og:url" content="http://cauu.online/技术/2018-03-20-Nodejs-block-chain-1/index.html">
+<meta property="og:site_name" content="Martin&#39;s Dean">
+<meta property="og:description" content="最近区块链概念大火，炒币、智能合约、闪电链等等各种新概念层出不穷，看的我们眼花缭乱。站在大时代的风口上，前端工程师难道就只能选择观望吗？不要忘了我们有NodeJS这个利器。下面就跟着我一起通过NodeJS来揭开区块链世界的神秘面纱吧。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-08T03:33:08.864Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nodejs撸一个简单的区块链（一）">
+<meta name="twitter:description" content="最近区块链概念大火，炒币、智能合约、闪电链等等各种新概念层出不穷，看的我们眼花缭乱。站在大时代的风口上，前端工程师难道就只能选择观望吗？不要忘了我们有NodeJS这个利器。下面就跟着我一起通过NodeJS来揭开区块链世界的神秘面纱吧。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://cauu.online/技术/2018-03-20-Nodejs-block-chain-1/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Nodejs撸一个简单的区块链（一） | Martin's Dean</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-100475240-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-100475240-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <a href="https://github.com/cauu" target="_blank" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Martin's Dean</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Cast a cold eye, on Life on Death, Horseman, 123!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories menu-item-active">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">1</span>
+      </a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">26</span>
+      </a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-timelines">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>时间轴</a>
+</li>
+
+      
+
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauu.online/技术/2018-03-20-Nodejs-block-chain-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Martin Cai">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/my_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Martin's Dean">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Nodejs撸一个简单的区块链（一）</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-20T00:00:00+00:00">2018-03-20</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                <span title="字数统计">3k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                <span title="阅读时长">0:03</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近区块链概念大火，炒币、智能合约、闪电链等等各种新概念层出不穷，看的我们眼花缭乱。站在大时代的风口上，前端工程师难道就只能选择观望吗？不要忘了我们有NodeJS这个利器。下面就跟着我一起通过NodeJS来揭开区块链世界的神秘面纱吧。</p>
+<a id="more"></a>
+<p>不过，在开始开发之前，很多人肯定首先要问一句：</p>
+<h4 id="什么是区块链？"><a href="#什么是区块链？" class="headerlink" title="什么是区块链？"></a>什么是区块链？</h4><p>一言以蔽之，区块链就是一种分布式数据库。分布式数据库并不是刚刚出现的新概念，经历了许多年的发展，它已经形成了一套相当成熟的体系。那么，区块链技术是如何从中脱颖而出呢？</p>
+<h4 id="分布式数据库，分布式账本和区块链"><a href="#分布式数据库，分布式账本和区块链" class="headerlink" title="分布式数据库，分布式账本和区块链"></a>分布式数据库，分布式账本和区块链</h4><p>要想回答上面的问题，我们就要搞清楚这三个概念的关系。分布式数据库，百度给它的定义是是指利用高速计算机网络将物理上分散的多个数据存储单元连接起来组成一个逻辑上统一的数据库。从这个角度来说，它和分布式账本没什么不同：都是将数据分散存储的一种技术。那么为什么我们还要提出分布式账本这个概念呢？</p>
+<p>上面提到了，在分布式数据库中，<strong>多个数据存储单元连接起来组成一个逻辑上统一的数据库</strong>。翻译过来，就是说在分布式数据库中，所有节点之间都是相互信任的，它们可以保证即使每个节点只保存一部分数据，将所有节点的数据整合后依然可以拿到完整的正确的数据。然而，分布式账本面对的却是完全不同的陌生环境。</p>
+<p>在分布式账本的世界里，每一个节点都是不可靠的，因此每个节点必须要保存完整的数据来保证数据不被恶意节点篡改。为了保证大部分人数据的可靠，分布式账本需要存在某种机制，使得所有节点能够就数据的更改达成共识。可以说，分布式账本面临着远比分布式数据库严酷的生存环境。因此，分布式账本可以作为分布式数据库来使用，然而现有的分布式数据库往往都不能满足分布式账本的需求。</p>
+<p>那么区块链和二者的关系又是什么呢？</p>
+<p>描述了分布式账本技术中，数据储存的结构。分布式账本可以采用各种各样的方式来储存它的数据，然而在区块链中，我们规定数据采用区块+链的模式进行储存。因此，我们可以说区块链可以说是分布式账本技术的子集。</p>
+<p>英文比较好的同学可以读一读这篇文章<a href="https://gendal.me/2016/11/08/on-distributed-databases-and-distributed-ledgers/" target="_blank" rel="noopener">distributed ledger || database</a></p>
+<h4 id="区块和链"><a href="#区块和链" class="headerlink" title="区块和链"></a>区块和链</h4><p>区块链中，区块是最基本的数据储存单元。区块创建时，除了会保存数据，还会通过<a href="http://blog.sina.com.cn/s/blog_d66494300102wz0z.html" target="_blank" rel="noopener">sha256算法</a>计算出能唯一标识它的hash值。并且，每个区块中都记录着它前一个区块的hash(prevBlockHash)，无数个区块通过这样的方式串联在一起，就构成了最基本的“区块链”。我们只需要知道最后一个区块对应的hash值，就可以毫不费力的遍历区块，拿到所有的数据。</p>
+<p>下面，让我们来看看一个最基本的区块长什么样：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Block</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(&#123; timeStamp, <span class="keyword">data</span>, prevBlockHash, hash &#125;) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.timeStamp = timeStamp;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.<span class="keyword">data</span> = <span class="keyword">data</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.prevBlockHash = prevBlockHash;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.hash = hash;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>是不是出乎意料的简单？</p>
+<p>有了区块，接着，我们实现一个“链”来保存这些区块:</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BlockChain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(blocks = []) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.blocks = blocks;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    addBlock(<span class="keyword">data</span>) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">const</span> prevBlock = <span class="keyword">this</span>.blocks[<span class="keyword">this</span>.blocks.length - <span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">const</span> newBlock = newBlock(<span class="keyword">data</span>, prevBlock.hash);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.blocks.push(newBlock);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>之前我们提到了，在区块链中，每一个区块都会被一个hash值唯一标识，因此添加区块时，我们需要计算出当前区块的hash。此处为了避免产生相同的hash，计算hash时，我们加入了当前系统的时间戳和前一个区块的hash值作为参数：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">function newBlock(<span class="keyword">data</span>, prevBlockHash) &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> block = new Block(&#123;</span><br><span class="line"></span><br><span class="line">    timeStamp: new Date().getTime(),</span><br><span class="line"></span><br><span class="line">    <span class="keyword">data</span>,</span><br><span class="line"></span><br><span class="line">    prevBlockHash</span><br><span class="line"></span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  block.setHash();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> block;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> Block &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">   setHash() &#123;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">const</span> headers = <span class="keyword">this</span>.prevBlockHash + <span class="keyword">this</span>.<span class="keyword">data</span> + <span class="keyword">this</span>.timeStamp;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">this</span>.hash = sha256(headers);</span><br><span class="line"></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>当我们添加区块时，我们需要拿到前一个区块的hash，但一开始，我们的链上一个区块都没有，我们又该如何向它添加区块呢？</p>
+<p>为了避免这个问题，当我们初始化区块链的时候，默认会创建一个区块，该区块的prevBlockHash为空。中本聪称它为<strong>创世区块(GenesisBlock)</strong>。</p>
+<p>下面我们看看如何初始化区块链：</p>
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">newBlockChain</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="type">BlockChain</span>([BlockChain.<span class="keyword">new</span><span class="type">GenesisBlock</span>()]);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">newGenesisBlock</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> Block.<span class="keyword">new</span><span class="type">Block</span>(<span class="string">"GenesisBlock"</span>, <span class="string">""</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有了这些方法，我们的迷你区块链就算搭建完成了。下面让我们运行一下:</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">const</span> chain = newBlockChain()<span class="comment">;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">addBlock(<span class="string">'hello, world'</span>)<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">console.<span class="built_in">log</span>(chain)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+<p>控制台中输出:</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">BlockChain &#123;</span><br><span class="line"></span><br><span class="line">  blocks:</span><br><span class="line"></span><br><span class="line">   [ Block &#123;</span><br><span class="line"></span><br><span class="line">       timeStamp: <span class="number">1521475867526</span>,</span><br><span class="line"></span><br><span class="line">       data: 'GenesisBlock',</span><br><span class="line"></span><br><span class="line">       prevBlockHash: '',</span><br><span class="line"></span><br><span class="line">       hash: '67d<span class="number">4953</span>d<span class="number">576041</span>5a66a5bf9effc8cc9dc8e<span class="number">468660</span>c96ed04d6f4ade0bfaa438c' &#125;,</span><br><span class="line"></span><br><span class="line">     Block &#123;</span><br><span class="line"></span><br><span class="line">       timeStamp: <span class="number">1521475867528</span>,</span><br><span class="line"></span><br><span class="line">       data: 'hello, world',</span><br><span class="line"></span><br><span class="line">       prevBlockHash: '67d<span class="number">4953</span>d<span class="number">576041</span>5a66a5bf9effc8cc9dc8e<span class="number">468660</span>c96ed04d6f4ade0bfaa438c',</span><br><span class="line"></span><br><span class="line">       hash: '9f<span class="number">4895</span>eaa71abca2b<span class="number">093786</span>9e9b<span class="number">5650429970</span>ce<span class="number">0093</span>fd<span class="number">35189490</span>a8a7df46f20' &#125; ] &#125;</span><br></pre></td></tr></table></figure>
+<p>大功告成！</p>
+<h4 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h4><p>当然，尽管这个简单的原型只包括了区块链最基本的数据结构，和真正的区块链实现还差了十万八千里, 但通过这它, 大家应该可以对区块链的概念建立一个初步的映像: 区块链并不是技术的创新, 而是通过对已有技术进行组合, 而诞生的一种全新的架构。之后, 我们会在这个基本的区块链添加POW算法, 记录交易信息并实现点对点的通信。让我们一步步见证这个新的架构如何爆发出颠覆性的力量。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Martin Cai</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://cauu.online/技术/2018-03-20-Nodejs-block-chain-1/" title="Nodejs撸一个简单的区块链（一）">http://cauu.online/技术/2018-03-20-Nodejs-block-chain-1/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+            <a href="/tags/nodejs/" rel="tag"># nodejs</a>
+          
+            <a href="/tags/blockchain/" rel="tag"># blockchain</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/技术/2018-02-05-iqc-system-development/" rel="next" title="iqc system development">
+                <i class="fa fa-chevron-left"></i> iqc system development
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/技术/2018-04-27-Nodejs-block-chain-2/" rel="prev" title="NodeJS撸一个简单的区块链（二）">
+                NodeJS撸一个简单的区块链（二） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/my_avatar.png" alt="Martin Cai">
+            
+              <p class="site-author-name" itemprop="name">Martin Cai</p>
+              <p class="site-description motion-element" itemprop="description">Coding, Travelling, Reading and Enjoying</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                    <span class="site-state-item-count">1</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">26</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/cauu" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:cauu@163.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#什么是区块链？"><span class="nav-number">1.</span> <span class="nav-text">什么是区块链？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式数据库，分布式账本和区块链"><span class="nav-number">2.</span> <span class="nav-text">分布式数据库，分布式账本和区块链</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#区块和链"><span class="nav-number">3.</span> <span class="nav-text">区块和链</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结论"><span class="nav-number">4.</span> <span class="nav-text">结论</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Martin Cai</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">90k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点总阅读时长">1:30</span>
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动 v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" rel="external nofollow" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/reading_progress/reading_progress.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <script src="/lib/bookmark/bookmark.min.js?v=1.0"></script>
+  <script type="text/javascript">
+  
+    bookmark.scrollToMark('auto', "#more");
+  
+  </script>
+
+
+</body>
+</html>

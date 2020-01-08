@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/my_favicon.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/my_favicon.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="dom0事件使用onclick添加的事件为dom0事件，同一个元素只能拥有一个dom0事件，后添加的事件会覆盖之前的事件。 1234567891011121314&amp;lt;div id=&quot;test&quot; onclick=&quot;alert(&apos;test&apos;)&quot; /&amp;gt;  //在元素上直接绑定dom0事件&amp;lt;script&amp;gt;    //使用onclick方法添加dom0事件    document.ge">
+<meta name="keywords" content="javascript,nodejs,interview">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前端面试题目总结">
+<meta property="og:url" content="http://cauu.online/技术/2016-10-28-Front-end-Interview/index.html">
+<meta property="og:site_name" content="Martin&#39;s Dean">
+<meta property="og:description" content="dom0事件使用onclick添加的事件为dom0事件，同一个元素只能拥有一个dom0事件，后添加的事件会覆盖之前的事件。 1234567891011121314&amp;lt;div id=&quot;test&quot; onclick=&quot;alert(&apos;test&apos;)&quot; /&amp;gt;  //在元素上直接绑定dom0事件&amp;lt;script&amp;gt;    //使用onclick方法添加dom0事件    document.ge">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-08T03:33:08.860Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="前端面试题目总结">
+<meta name="twitter:description" content="dom0事件使用onclick添加的事件为dom0事件，同一个元素只能拥有一个dom0事件，后添加的事件会覆盖之前的事件。 1234567891011121314&amp;lt;div id=&quot;test&quot; onclick=&quot;alert(&apos;test&apos;)&quot; /&amp;gt;  //在元素上直接绑定dom0事件&amp;lt;script&amp;gt;    //使用onclick方法添加dom0事件    document.ge">
+
+
+
+
+
+
+  <link rel="canonical" href="http://cauu.online/技术/2016-10-28-Front-end-Interview/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>前端面试题目总结 | Martin's Dean</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-100475240-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-100475240-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <a href="https://github.com/cauu" target="_blank" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Martin's Dean</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Cast a cold eye, on Life on Death, Horseman, 123!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories menu-item-active">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">1</span>
+      </a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">26</span>
+      </a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-timelines">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />时间轴</a>
+</li>
+
+      
+
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauu.online/技术/2016-10-28-Front-end-Interview/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Martin Cai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/my_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Martin's Dean">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">前端面试题目总结</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-10-27T23:00:00+00:00">2016-10-28</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                <span title="字数统计">5k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                <span title="阅读时长">0:05</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="dom0事件"><a href="#dom0事件" class="headerlink" title="dom0事件"></a>dom0事件</h3><p>使用onclick添加的事件为dom0事件，同一个元素只能拥有一个dom0事件，后添加的事件会覆盖之前的事件。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"test"</span> <span class="attr">onclick</span>=<span class="string">"alert('test')"</span> /&gt;</span>  //在元素上直接绑定dom0事件</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">    <span class="comment">//使用onclick方法添加dom0事件</span></span></span><br><span class="line"></span><br><span class="line"><span class="javascript">    <span class="built_in">document</span>.getElementById(<span class="string">'test'</span>).onclick=<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">        alert(<span class="string">'test'</span>);</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>对dom0事件，IE的事件流是冒泡（首先出发叶子节点事件），而netscape采用的是事件捕获（相反的顺序）。    </p>
+<a id="more"></a>
+<h3 id="dom2事件"><a href="#dom2事件" class="headerlink" title="dom2事件"></a>dom2事件</h3><p>使用addEventListener绑定的事件被称为dom2级事件。dom2级事件规定了事件流包含3个阶段：事件捕获、处于目标、事件冒泡。看一个例子:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"p"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"c"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> p = <span class="built_in">document</span>.getElementById(<span class="string">'p'</span>),</span></span><br><span class="line"></span><br><span class="line"><span class="javascript">        c = <span class="built_in">document</span>.getElementById(<span class="string">'c'</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">    c.addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>&#123;</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">        alert(<span class="string">'子节点捕获'</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">    &#125;, <span class="literal">true</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">    c.addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>&#123;</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">        alert(<span class="string">'子节点冒泡'</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">    &#125;, <span class="literal">false</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">    p.addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>&#123;    </span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">        alert(<span class="string">'父节点捕获'</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">    &#125;, <span class="literal">true</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">    p.addEventListner(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>&#123;</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">        alert(<span class="string">'父节点冒泡'</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">    &#125;, <span class="literal">false</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>点击元素，会依次输出<code>父节点捕获-&gt;子节点捕获-&gt;子节点冒泡-&gt;父节点冒泡</code>。</p>
+<h3 id="js事件的三个阶段的理解"><a href="#js事件的三个阶段的理解" class="headerlink" title="js事件的三个阶段的理解"></a>js事件的三个阶段的理解</h3><h3 id="js事件代理-委托"><a href="#js事件代理-委托" class="headerlink" title="js事件代理/委托"></a>js事件代理/委托</h3><p>当我们需要为多个相同层级的子节点添加事件处理函数时，我们可以通过事件冒泡的机制，使用它们共同的父节点来处理这些事件。例子:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">//对每一个&lt;li&gt;添加事件处理函数</span></span><br><span class="line"></span><br><span class="line">&lt;ul id=<span class="string">"parent-list"</span>&gt;</span><br><span class="line">  &lt;li id=<span class="string">"post-1"</span>&gt;Item <span class="number">1</span>&lt;<span class="regexp">/li&gt;</span></span><br><span class="line"><span class="regexp">  &lt;li id="post-2"&gt;Item 2&lt;/</span>li&gt;</span><br><span class="line">  &lt;li id=<span class="string">"post-3"</span>&gt;Item <span class="number">3</span>&lt;<span class="regexp">/li&gt;</span></span><br><span class="line"><span class="regexp">  &lt;li id="post-4"&gt;Item 4&lt;/</span>li&gt;</span><br><span class="line">  &lt;li id=<span class="string">"post-5"</span>&gt;Item <span class="number">5</span>&lt;<span class="regexp">/li&gt;</span></span><br><span class="line"><span class="regexp">  &lt;li id="post-6"&gt;Item 6&lt;/</span>li&gt;</span><br><span class="line">&lt;<span class="regexp">/ul&gt;</span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/事件代理的写法</span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ 获取父节点，并为它添加一个click事件</span></span><br><span class="line"><span class="regexp">document.getElementById("parent-list").addEventListener("click",function(e) &#123;</span></span><br><span class="line"><span class="regexp">  /</span><span class="regexp">/ 检查事件源e.targe是否为Li</span></span><br><span class="line"><span class="regexp">  if(e.target &amp;&amp; e.target.nodeName.toUpperCase == "LI") &#123;</span></span><br><span class="line"><span class="regexp">    /</span><span class="regexp">/ 真正的处理过程在这里</span></span><br><span class="line"><span class="regexp">    console.log("List item ",e.target.id.replace("post-")," was clicked!");</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br></pre></td></tr></table></figure>
+<h3 id="前端性能优化"><a href="#前端性能优化" class="headerlink" title="前端性能优化"></a>前端性能优化</h3><ul>
+<li><p>减少http请求（包括合并js文件、css文件、图片）</p>
+</li>
+<li><p>减少对DOM的操作，正确理解Repaint和Reflow（React中天然增加了一层VirtualDOM来保证每次重绘影响的范围尽可能小）</p>
+</li>
+<li><p>使用CDN</p>
+</li>
+<li><p>将css放在<head><meta name="generator" content="Hexo 3.9.0">中，javascript引用放在</head><body>的最后（因为js阻塞执行的特点，保证即使js没有执行，用户也可以看到完整的页面）。</body></p>
+</li>
+<li><p>minfy js和css文件。</p>
+</li>
+<li><p>压缩图片大小</p>
+</li>
+<li><p>尽可能减少不必要的cookie和localstorage。</p>
+</li>
+</ul>
+<h3 id="闭包的原理及应用"><a href="#闭包的原理及应用" class="headerlink" title="闭包的原理及应用"></a>闭包的原理及应用</h3><p>参考之前的文章[ES6][JS闭包].md</p>
+<h3 id="JS中this的使用"><a href="#JS中this的使用" class="headerlink" title="JS中this的使用"></a>JS中this的使用</h3><p>参考之前的文章[ES6][you dont know this].md</p>
+<h3 id="手写bind函数"><a href="#手写bind函数" class="headerlink" title="手写bind函数"></a>手写bind函数</h3><p>bind函数用来实现函数调用的<code>hard bind</code>。因为它返回的是函数，因此一定少不了闭包的应用。核心代码就一句:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span>(<span class="params">func, ctx</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//...省略..</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> func.apply(ctx, <span class="built_in">arguments</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="js变量提升-hoisting"><a href="#js变量提升-hoisting" class="headerlink" title="js变量提升(hoisting)"></a>js变量提升(hoisting)</h3><p>所谓变量提升，是指ES5中，函数声明和变量声明被隐式的提升到函数开头的现象。需要注意的是使用var声明的变量只会提升变量的声明，而类似于function a() {} 这样的函数定义则会整体被提升。</p>
+<p>ES5中，只存在全局和函数作用域，不存在块级作用域，再加上变量提升的特性，很容易产生很多在其他语言中不会出现的现象，下面是一道非常典型的包含变量提升的面试题:</p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    getName = <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>&#123; alert (<span class="number">1</span>); &#125;;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line">Foo.getName = <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>&#123; alert (<span class="number">2</span>);&#125;;</span><br><span class="line">Foo.prototype.getName = <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>&#123; alert (<span class="number">3</span>);&#125;;</span><br><span class="line"><span class="keyword">var</span> getName = <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>&#123; alert (<span class="number">4</span>);&#125;;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getName</span><span class="params">()</span> </span>&#123; alert (<span class="number">5</span>);&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//请写出以下输出结果：</span></span><br><span class="line">Foo.getName();  </span><br><span class="line">getName(); </span><br><span class="line">Foo().getName(); </span><br><span class="line">getName(); </span><br><span class="line"><span class="keyword">new</span> Foo.getName(); </span><br><span class="line"><span class="keyword">new</span> Foo().getName(); </span><br><span class="line"><span class="keyword">new</span> <span class="keyword">new</span> Foo().getName();</span><br></pre></td></tr></table></figure>
+<p>这道题目，结合变量提升，可以翻译成如下形式:</p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">var</span> getName; <span class="comment">//getName声明被提升到开头</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getName</span><span class="params">()</span> </span>&#123; alert(<span class="number">5</span>);  &#125;  <span class="comment">//函数getName被提升到开头，并覆盖getName变量</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    getName= <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>&#123; alert(<span class="number">1</span>); &#125;;  <span class="comment">//没有使用var声明的getName默认指向全局变量</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Foo.getName = <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>&#123; alert(<span class="number">2</span>); &#125;</span><br><span class="line"></span><br><span class="line">Foo.prototype.getName = <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>&#123; alert(<span class="number">3</span>); &#125;</span><br><span class="line"></span><br><span class="line">getName = <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>&#123; alert(<span class="number">4</span>); &#125;  <span class="comment">//getName函数定义未被提升</span></span><br></pre></td></tr></table></figure>
+<p>需要注意的是，<font color="red">ES6中，let和const声明不再存在变量提升的现象</font>，这样也规避了很多问题。</p>
+<h3 id="js中运算符的优先级"><a href="#js中运算符的优先级" class="headerlink" title="js中运算符的优先级"></a>js中运算符的优先级</h3><h3 id="js垃圾回收机制"><a href="#js垃圾回收机制" class="headerlink" title="js垃圾回收机制"></a>js垃圾回收机制</h3><p>在Javascript中，如果一个对象不再被引用，那么这个对象就会被GC回收。如果两个对象互相引用，而不再被第3者所引用，那么这两个互相引用的对象也会被回收。</p>
+<h3 id="js跨域问题"><a href="#js跨域问题" class="headerlink" title="js跨域问题"></a>js跨域问题</h3><p> 跨域分为iframe的跨域请求和跨全域的请求。</p>
+<p>常见的跨全域请求的解决方法主要有下面三种:</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="bullet">1.  </span>JSONP</span><br><span class="line"></span><br><span class="line"><span class="bullet">2.  </span>Access-Control</span><br><span class="line"></span><br><span class="line"><span class="bullet">3.  </span>服务器代理</span><br></pre></td></tr></table></figure>
+<p>关于JSONP的实现可以参考这篇文章:<a href="http://kb.cnblogs.com/page/139725/" target="_blank" rel="noopener">说说JSON和JSONP</a></p>
+<h3 id="函数节流"><a href="#函数节流" class="headerlink" title="函数节流"></a>函数节流</h3><p>在网页中，我们常常碰到这种情况: 需要短时间内频繁调用一段函数来判断scroll的位置，或是判断用户拖拽的对象所处的位置，此时，除了优化响应函数外，函数节流也必不可少。</p>
+<p>所谓函数节流，是指通过一个throttle函数控制函数两次调用的间隔，或规定其单位时间内的调用次数的方法。</p>
+<p>实际使用中，我们常常使用underscore库定义的throttle函数。</p>
+<p>还可以参考这篇文章: <a href="http://www.alloyteam.com/2012/11/javascript-throttle/" target="_blank" rel="noopener">浅谈js中的throttle函数</a></p>
+<h3 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h3><p>js中，常见的设计模式包括<strong>观察者模式</strong>，<strong>责任链模式</strong>，<strong>工厂模式</strong>。</p>
+<h3 id="css垂直居中"><a href="#css垂直居中" class="headerlink" title="css垂直居中"></a>css垂直居中</h3><ol>
+<li><p>单行文字设置容器的line-height等于容器height属性即可</p>
+</li>
+<li><p>文字+<img>可以通过设置容器的vertical-align属性，使得图片和文字基于某一基准线对齐（设置为middle就实现了垂直居中）。</p>
+</li>
+<li><p>table结合table-cell的vertical-align属性可以让单元格在表格中居中对齐。</p>
+</li>
+<li><p>使用position: absolute手动调整控件位置直到居中。</p>
+</li>
+<li><p>让容器的上下padding相同实现居中效果。 </p>
+</li>
+<li><p>float一个不可见的高度为50%的控件，然后为需要垂直居中的控件添加clear:both。</p>
+</li>
+</ol>
+<p>参考: <a href="http://blog.csdn.net/wolinxuebin/article/details/7615098" target="_blank" rel="noopener">css垂直居中的6种方法</a></p>
+<h3 id="响应式布局"><a href="#响应式布局" class="headerlink" title="响应式布局"></a>响应式布局</h3><p>主要是对media query的使用和对max-width的理解。此外，使用rem作为响应式布局长度的基本单位，可以保证控件和文字大小的自适应。</p>
+<h3 id="深拷贝和浅拷贝"><a href="#深拷贝和浅拷贝" class="headerlink" title="深拷贝和浅拷贝"></a>深拷贝和浅拷贝</h3><p>浅拷贝(shallow copy)</p>
+<h3 id="viewport的理解"><a href="#viewport的理解" class="headerlink" title="viewport的理解"></a>viewport的理解</h3><h3 id="js数组方法"><a href="#js数组方法" class="headerlink" title="js数组方法"></a>js数组方法</h3><h3 id="html缓存策略"><a href="#html缓存策略" class="headerlink" title="html缓存策略"></a>html缓存策略</h3><p>cookie:</p>
+<p>localstorage:</p>
+<p>sessionstorage:</p>
+<p>参考:</p>
+<p><a href="http://www.cnblogs.com/2050/p/3877280.html" target="_blank" rel="noopener">移动开发之viewport深入理解</a></p>
+<p><a href="http://www.cnblogs.com/yexiaochai/p/3567597.html" target="_blank" rel="noopener">事件的几个阶段你真的了解了吗</a></p>
+<p><a href="http://www.cnblogs.com/xxcanghai/p/5205998.html" target="_blank" rel="noopener">2016十家公司前端面试小结</a></p>
+<p><a href="http://www.cnblogs.com/Darren_code/archive/2011/12/31/property.html" target="_blank" rel="noopener">前端各种优化</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Martin Cai</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://cauu.online/技术/2016-10-28-Front-end-Interview/" title="前端面试题目总结">http://cauu.online/技术/2016-10-28-Front-end-Interview/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+            <a href="/tags/nodejs/" rel="tag"># nodejs</a>
+          
+            <a href="/tags/interview/" rel="tag"># interview</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/技术/2016-10-16-You-Dont-Know-This/" rel="next" title="JS中的this">
+                <i class="fa fa-chevron-left"></i> JS中的this
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/技术/2016-11-03-tcp-handshake/" rel="prev" title="如何理解TCP的三次握手协议?">
+                如何理解TCP的三次握手协议? <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/my_avatar.png"
+                alt="Martin Cai" />
+            
+              <p class="site-author-name" itemprop="name">Martin Cai</p>
+              <p class="site-description motion-element" itemprop="description">Coding, Travelling, Reading and Enjoying</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                    <span class="site-state-item-count">1</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">26</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/cauu" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:cauu@163.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#dom0事件"><span class="nav-number">1.</span> <span class="nav-text">dom0事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dom2事件"><span class="nav-number">2.</span> <span class="nav-text">dom2事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#js事件的三个阶段的理解"><span class="nav-number">3.</span> <span class="nav-text">js事件的三个阶段的理解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#js事件代理-委托"><span class="nav-number">4.</span> <span class="nav-text">js事件代理/委托</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#前端性能优化"><span class="nav-number">5.</span> <span class="nav-text">前端性能优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#闭包的原理及应用"><span class="nav-number">6.</span> <span class="nav-text">闭包的原理及应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JS中this的使用"><span class="nav-number">7.</span> <span class="nav-text">JS中this的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#手写bind函数"><span class="nav-number">8.</span> <span class="nav-text">手写bind函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#js变量提升-hoisting"><span class="nav-number">9.</span> <span class="nav-text">js变量提升(hoisting)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#js中运算符的优先级"><span class="nav-number">10.</span> <span class="nav-text">js中运算符的优先级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#js垃圾回收机制"><span class="nav-number">11.</span> <span class="nav-text">js垃圾回收机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#js跨域问题"><span class="nav-number">12.</span> <span class="nav-text">js跨域问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数节流"><span class="nav-number">13.</span> <span class="nav-text">函数节流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设计模式"><span class="nav-number">14.</span> <span class="nav-text">设计模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#css垂直居中"><span class="nav-number">15.</span> <span class="nav-text">css垂直居中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#响应式布局"><span class="nav-number">16.</span> <span class="nav-text">响应式布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#深拷贝和浅拷贝"><span class="nav-number">17.</span> <span class="nav-text">深拷贝和浅拷贝</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#viewport的理解"><span class="nav-number">18.</span> <span class="nav-text">viewport的理解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#js数组方法"><span class="nav-number">19.</span> <span class="nav-text">js数组方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#html缓存策略"><span class="nav-number">20.</span> <span class="nav-text">html缓存策略</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Martin Cai</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">90k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点总阅读时长">1:30</span>
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动 v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" rel="external nofollow" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/reading_progress/reading_progress.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <script src="/lib/bookmark/bookmark.min.js?v=1.0"></script>
+  <script type="text/javascript">
+  
+    bookmark.scrollToMark('auto', "#more");
+  
+  </script>
+
+
+</body>
+</html>

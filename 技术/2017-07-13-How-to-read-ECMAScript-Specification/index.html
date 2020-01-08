@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/my_favicon.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/my_favicon.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="TC39 Overview 从零开始写个编译器 Javascript语法解析与抽象语法树 TC39 Process TC39 Proposals ECMAScript 2018规范 LL(K)算法 LL(1)文法分析器的简单实现 Keywords:  TC39, tokens, lexical grammer, terminal symbols, parse tree, nonterminal,">
+<meta name="keywords" content="javascript,ecmascript,es2018">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to read ECMAScript Specification?">
+<meta property="og:url" content="http://cauu.online/技术/2017-07-13-How-to-read-ECMAScript-Specification/index.html">
+<meta property="og:site_name" content="Martin&#39;s Dean">
+<meta property="og:description" content="TC39 Overview 从零开始写个编译器 Javascript语法解析与抽象语法树 TC39 Process TC39 Proposals ECMAScript 2018规范 LL(K)算法 LL(1)文法分析器的简单实现 Keywords:  TC39, tokens, lexical grammer, terminal symbols, parse tree, nonterminal,">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-08T03:33:08.864Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to read ECMAScript Specification?">
+<meta name="twitter:description" content="TC39 Overview 从零开始写个编译器 Javascript语法解析与抽象语法树 TC39 Process TC39 Proposals ECMAScript 2018规范 LL(K)算法 LL(1)文法分析器的简单实现 Keywords:  TC39, tokens, lexical grammer, terminal symbols, parse tree, nonterminal,">
+
+
+
+
+
+
+  <link rel="canonical" href="http://cauu.online/技术/2017-07-13-How-to-read-ECMAScript-Specification/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>How to read ECMAScript Specification? | Martin's Dean</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-100475240-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-100475240-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <a href="https://github.com/cauu" target="_blank" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Martin's Dean</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Cast a cold eye, on Life on Death, Horseman, 123!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories menu-item-active">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">1</span>
+      </a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">26</span>
+      </a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-timelines">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>时间轴</a>
+</li>
+
+      
+
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauu.online/技术/2017-07-13-How-to-read-ECMAScript-Specification/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Martin Cai">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/my_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Martin's Dean">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">How to read ECMAScript Specification?</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-12T23:00:00+00:00">2017-07-13</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                <span title="字数统计">6k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                <span title="阅读时长">0:06</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><a href="https://ponyfoo.com/articles/tc39-ecmascript-proposals-future-of-javascript" target="_blank" rel="noopener">TC39 Overview</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/19878087?columnSlug=mosky" target="_blank" rel="noopener">从零开始写个编译器</a></p>
+<p><a href="http://www.iteye.com/news/30731" target="_blank" rel="noopener">Javascript语法解析与抽象语法树</a></p>
+<p><a href="http://www.jianshu.com/p/b0877d1fc2a4" target="_blank" rel="noopener">TC39 Process</a></p>
+<p><a href="https://prop-tc39.now.sh/" target="_blank" rel="noopener">TC39 Proposals</a></p>
+<p><a href="https://tc39.github.io/ecma262/" target="_blank" rel="noopener">ECMAScript 2018规范</a></p>
+<p><a href="https://www.tutorialspoint.com/compiler_design/compiler_design_top_down_parser.htm" target="_blank" rel="noopener">LL(K)算法</a></p>
+<p><a href="http://blog.csdn.net/it_dream_er/article/details/53483853" target="_blank" rel="noopener">LL(1)文法分析器的简单实现</a></p>
+<p>Keywords: </p>
+<p>TC39, tokens, lexical grammer, terminal symbols, parse tree, nonterminal, </p>
+<p>Production, terminal symbols, nonterminal symbols</p>
+<hr>
+<p>最近抽空大致看了下ES2018的specification，内容深广，涉及的语言设计的底层细节非一日所能达。面对这样庞大的一份资料，如何看待它呢？我的态度是，不求通读标准，但求拥有阅读和理解标准的能力。即使你熟记标准中的所有细节，对应用开发者来说，也无助于解决实际生产中的绝大部分问题，但当我们遇到某些无法可解疑难杂症时，查阅标准，可能是我们攻克问题的最后一件武器。更重要的是，对于自己朝夕使用的工具，如果都只知皮毛，那也确实说不过去了。</p>
+<a id="more"></a>
+<p>ECMAScript 8中，第1章到第3章是对文件本身的介绍，4章是对语言总体设计思路的介绍，类似于一个概览，第5章介绍了标准中词法、文法、算法定义的规则，第6章介绍了语言和标准中的变量类型，第7章叫Abstract Operations，这部分主要是定义了一些函数隐式调用的规则和文档中会用到的一些抽象方法。第8章详细介绍了emacscript中作用域、运行环境的定义（这也是js中问题的高发区），从第9章开始，就是对语言实现层面细节的介绍了，后面的内容都比较抽象、琐碎，对我来说，价值最大的反而是前面的4，8章。</p>
+<p>如果我们只是希望了解这份规则，那到这里就可以打住了。但如果我们希望具备“看懂”这份标准的能力，这就不简单了。除了基本的英文，我们还需要一些额外的编译原理的知识。</p>
+<h4 id="编译原理"><a href="#编译原理" class="headerlink" title="编译原理"></a>编译原理</h4><p>编译器并不是什么高大上的东西，本质上它只是一种处理数据的方法。说白了，编译器就是根据定义好的规则去解析传入的字符串（高级语言），再将其转换成低级语言的一种工具。也就是计算机世界里的“翻译”。</p>
+<p>插一句题外话，既然计算机语言可以通过编译器去翻译，我们能否用同样的方式让计算机来翻译我们人类的语言呢？20世纪5 60年代的科学家就是这么想的，最终，他们意识到，相比计算机语言，人类的语言要复杂的多，仅仅遵循固定的语法规则是不够的，语言和语法会不断进化，更恼火的是，自然语言中充满了不规则的用法和一词多意的情况，想穷举所有情况所需的计算量，用天文数字来形容都不够。直到数学和统计模型代替了基于编译器的方法，自然语言处理才迎来了质的飞跃。</p>
+<p>既然编译器本质是一位“翻译”，它是如何“翻译”我们的代码呢？首先我们想想，现实世界中，我们要将一段中文翻译成英文，需要经历哪些过程？</p>
+<ol>
+<li><p>首先识别出句子中的每一个单词</p>
+</li>
+<li><p>分析句子的结构</p>
+</li>
+<li><p>初步翻译出译文</p>
+</li>
+<li><p>对译文进行润色、修改</p>
+</li>
+<li><p>写出最终译文</p>
+</li>
+</ol>
+<p>事实上，机器在进行翻译时，也遵循了这样一套流程：</p>
+<p>词法分析、语法分析、语义分析、生成中间代码、优化、目标代码生成。</p>
+<h4 id="词法分析"><a href="#词法分析" class="headerlink" title="词法分析"></a>词法分析</h4><p><code>function foo() { console.log(&#39;test&#39;) }</code></p>
+<p>前面提到了，在翻译一句话时，我们首先要识别出句子中每一个单词，计算机亦然。就拿上面这段代码为例，要理解它，计算机首先要将这串字符串中的关键字提取出来，形如:</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">[<span class="symbol">'function</span>', <span class="symbol">'foo</span>', '(', ')', '&#123;', <span class="symbol">'console</span>', <span class="symbol">'.</span>', <span class="symbol">'log</span>', '&#123;', ''', <span class="symbol">'test</span>', ''', ')', '&#125;']</span><br></pre></td></tr></table></figure>
+<p>但仅仅是把关键词切割出来还不够，计算机还需要知道每一个关键词的类型，这可以帮助它进行后续的语法分析（比如理解var var a = 1；是不合规的语句），结合类型和语素，我们就得到了词法分析的最小单位Token。标准的第11章主要工作就是定义了ECMAScript的基本的Token。举个例子:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="attr">BooleanLiteral ::</span></span><br><span class="line"></span><br><span class="line">    <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">    <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<p>定义了基本的bool类型的token。它的类型是BooleanLiteral（Literal的一种），取值可以是true和false，当词法分析器看到程序中的true或者false，它就会向词法分析器的队列中添加这样一条数据:</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="section">语素: true</span></span><br><span class="line"></span><br><span class="line"><span class="section">类型: Literal</span></span><br></pre></td></tr></table></figure>
+<p>由于词法分析器是逐字读取我们输入的源码，它如何判断true/false或是test这样的字符串是变量、字符串还是保留字呢？这又属于另一个课题了，可以看看<a href="https://zhuanlan.zhihu.com/p/19878146?columnSlug=mosky" target="_blank" rel="noopener">这篇文章</a></p>
+<h4 id="语法分析"><a href="#语法分析" class="headerlink" title="语法分析"></a>语法分析</h4><p>首先可以看一个<a href="http://esprima.org/demo/parse.html#" target="_blank" rel="noopener">demo</a>，对语法分析生成的<strong>抽象语法树(AST)</strong>有一个直观的感受。</p>
+<p>词法分析器的输出会作为输入传给语法分析器，然后被转换成对应的语法树。但我们知道，词法分析器的输出是如下一个数组:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">[</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        <span class="attr">"type"</span>: <span class="string">"Keyword"</span>,</span><br><span class="line"></span><br><span class="line">        <span class="attr">"value"</span>: <span class="string">"var"</span></span><br><span class="line"></span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        <span class="attr">"type"</span>: <span class="string">"Identifier"</span>,</span><br><span class="line"></span><br><span class="line">        <span class="attr">"value"</span>: <span class="string">"answer"</span></span><br><span class="line"></span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        <span class="attr">"type"</span>: <span class="string">"Punctuator"</span>,</span><br><span class="line"></span><br><span class="line">        <span class="attr">"value"</span>: <span class="string">"="</span></span><br><span class="line"></span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        <span class="attr">"type"</span>: <span class="string">"Numeric"</span>,</span><br><span class="line"></span><br><span class="line">        <span class="attr">"value"</span>: <span class="string">"6"</span></span><br><span class="line"></span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        <span class="attr">"type"</span>: <span class="string">"Punctuator"</span>,</span><br><span class="line"></span><br><span class="line">        <span class="attr">"value"</span>: <span class="string">"*"</span></span><br><span class="line"></span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        <span class="attr">"type"</span>: <span class="string">"Numeric"</span>,</span><br><span class="line"></span><br><span class="line">        <span class="attr">"value"</span>: <span class="string">"7"</span></span><br><span class="line"></span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        <span class="attr">"type"</span>: <span class="string">"Punctuator"</span>,</span><br><span class="line"></span><br><span class="line">        <span class="attr">"value"</span>: <span class="string">";"</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>这样一个数组要如何转换成我们最终的语法树呢?这里，就需要引出<strong>文法</strong>这个概念了。</p>
+<p>文法，是描述语言结构的工具，通过文法，我们可以定义语言的具体表示形式。比如对语句:</p>
+<p><code>var a = 6;</code></p>
+<p>如果用文法来定义它，可表示为:</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="symbol">AssignmentExpression:</span></span><br><span class="line"></span><br><span class="line">    LeftHandSizeExpression = AssignmentExpression</span><br></pre></td></tr></table></figure>
+<p>这条文法规则统称为一条产生式<strong>(Production)</strong>，其中AssignmentExpression是一条非终结符<strong>(Nonterminal)</strong>，非终结符可以进一步分解，分解为一组基本的Token组成的语句，这些无法再分的token也叫终结符<strong>(Terminal)</strong>。</p>
+<p>所以语法分析最终过程，就是将我们的源代码进行展开的过程。如果我们的代码能够找到一个合适的展开方式，并生成相应的AST，就意味着我们的代码是合乎语法规则的。如果无法找到这样一个AST，那么一定是我们的代码出错了。</p>
+<p>关于展开式，还可以读一读<a href="https://zhuanlan.zhihu.com/p/19894073?columnSlug=mosky" target="_blank" rel="noopener">此文</a>。</p>
+<p>标准的10到15章，详细定义了JS中的文法规则。</p>
+<h4 id="语义分析-Elaborator"><a href="#语义分析-Elaborator" class="headerlink" title="语义分析(Elaborator)"></a>语义分析(Elaborator)</h4><p>这个阶段的英文叫做精细化，但是翻译过来叫语义分析。因为在强类型语言中，它的功能，主要是对上一步生成的AST进行类型检查，比如在Java中，如果出现string = int + char的情况，编译器就会报错。那么对js这样的弱类型语言来说，它就没有用处了吗？事实上，我们常用的uglify插件就是在这里起作用的。除此之外，判断参数个数、类型和声明是不是不一样，或是哪些变量定义了却没用到也可以归到它的指责中去。简而言之，它可以对一段合乎语法规则的代码进行语义检查和调优。</p>
+<p>因此，翻译成精细化或许比语义分析更合适。</p>
+<h4 id="生成目标代码"><a href="#生成目标代码" class="headerlink" title="生成目标代码"></a>生成目标代码</h4><p>经过上面这几步，我们的源代码就可以替换为目标代码了。</p>
+<p>了解了编译大概的步骤和原理，我们就可以更进一步了。</p>
+<p>前面我们简单提到了第9章开始，就是对语言底层细节的描述，这里的内容细节、琐碎，但大量的问题都可以在这里得到解答。而了解的语言编译的过程，我们已经不必再畏惧它，如果有兴趣，甚至可以把这一部分啃下来。</p>
+<p>标准的10-15章采用自底向上的方式，层层递进的定义了ECMACSript的词法和文法规则，第10章定义了基本的编码规则（词用Unicode进行编码）；第11-15依次定义了词法、表达式、声明和语句、类和方法、模块和Script，而整个JS的文法就这样金字塔般的搭建起来。在这基础之上，由算法 &amp;&amp; 数据结构构成了我们最终的应用。</p>
+<ul>
+<li>Token的定义</li>
+</ul>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="type">CommonToken</span>::</span><br><span class="line"></span><br><span class="line"><span class="type">IdentifierName</span></span><br><span class="line"><span class="type">Punctuator</span></span><br><span class="line"><span class="type">NumericLiteral</span></span><br><span class="line"><span class="type">StringLiteral</span></span><br><span class="line"><span class="type">Template</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">ReservedWord</span>::</span><br><span class="line"></span><br><span class="line"><span class="type">Keyword</span></span><br><span class="line"><span class="type">FutureReservedWord</span></span><br><span class="line"><span class="type">NullLiteral</span></span><br><span class="line"><span class="type">BooleanLiteral</span></span><br><span class="line"></span><br><span class="line"><span class="type">Keyword</span>::one of</span><br><span class="line"><span class="keyword">break</span> do in typeof <span class="keyword">case</span> <span class="keyword">else</span> instanceof <span class="keyword">var</span> <span class="keyword">catch</span> export <span class="keyword">new</span> void <span class="class"><span class="keyword">class</span> <span class="keyword">extends</span> <span class="title">returnwhile</span> <span class="title">const</span> <span class="title">finally</span> <span class="title">super</span> <span class="keyword">with</span> <span class="title">continue</span> <span class="title">for</span> <span class="title">switch</span> <span class="title">yield</span> <span class="title">debugger</span> <span class="title">function</span> <span class="title">this</span> <span class="title">default</span> <span class="title">if</span> <span class="title">throw</span> <span class="title">delete</span> <span class="title">import</span> <span class="title">try</span> <span class="title">await</span></span></span><br></pre></td></tr></table></figure>
+<p>上面的产生式采用嵌套的方式定义了ECMAScript的保留字，我们只需要将里面的字段替换掉，就可以得到包含所有reservedWord的表达式。</p>
+<p>除了token，文法也采用了类似的嵌套+递归的方式进行定义。</p>
+<ul>
+<li>一条典型的文法规则定义</li>
+</ul>
+<figure class="highlight hsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">If</span> Statement[<span class="keyword">Yield</span>, <span class="keyword">Await</span>, <span class="keyword">Return</span>]:</span><br><span class="line"><span class="keyword">if</span> (Expression[+In, ?<span class="keyword">Yield</span>, ?<span class="keyword">Await</span>]) Statement[?<span class="keyword">Yield</span>, ?<span class="keyword">Await</span>, ?<span class="keyword">Return</span>] <span class="keyword">else</span> Statement[?<span class="keyword">Yield</span>, ?<span class="keyword">Await</span>, ?<span class="keyword">Return</span>]</span><br><span class="line"><span class="keyword">if</span> (Expression[+In, ?<span class="keyword">Yield</span>, ?<span class="keyword">Await</span>]) Statement[?<span class="keyword">Yield</span>, ?<span class="keyword">Await</span>, ?<span class="keyword">Return</span>]</span><br></pre></td></tr></table></figure>
+<p>上面的规则定义了if block的文法，实际编译过程中，我们会把按照词法规则划分好的数组再进行文法匹配，常见的匹配算法有LL(k)和LR(k)算法。</p>
+<ul>
+<li>算法的定义</li>
+</ul>
+<p>文法和词法的定义主要还是面向编译器的开发者，对顶层的应用开发者来说，我们接触的最多、也是最有意义的部分其实是对某些内置算法的定义。比如使用<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<p>ReturnIfAbrupt(x).<br>ReturnIfAbrupt(y).<br>If Type(x) is the same as Type(y), then<br>Return the result of performing Strict Equality Comparison x === y.<br>If x is null and y is undefined, return true.<br>If x is undefined and y is null, return true.<br>If Type(x) is Number and Type(y) is String,<br>　　return the result of the comparison x == ToNumber(y).<br>If Type(x) is String and Type(y) is Number,<br>　　return the result of the comparison ToNumber(x) == y.<br>If Type(x) is Boolean, return the result of the comparison ToNumber(x) == y.<br>If Type(y) is Boolean, return the result of the comparison x == ToNumber(y).<br>If Type(x) is either String, Number, or Symbol and Type(y) is Object, then<br>　　return the result of the comparison x == ToPrimitive(y).<br>If Type(x) is Object and Type(y) is either String, Number, or Symbol, then<br>　　return the result of the comparison ToPrimitive(x) == y.<br>Return false.<br><code>`</code></p>
+<p>通过翻译这段伪代码，我们知道了，当使用==等号进行比较的时候, null == undefined返回的是true；当我们的实现涉及到了诸如此类的边界问题，如果google都无法解答，不妨读一读标准中关于算法定义的部分。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Martin Cai</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://cauu.online/技术/2017-07-13-How-to-read-ECMAScript-Specification/" title="How to read ECMAScript Specification?">http://cauu.online/技术/2017-07-13-How-to-read-ECMAScript-Specification/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+            <a href="/tags/ecmascript/" rel="tag"># ecmascript</a>
+          
+            <a href="/tags/es2018/" rel="tag"># es2018</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/技术/2017-04-24-React-infinite-scroll-list/" rel="next" title="使用React实现无限下拉加载列表">
+                <i class="fa fa-chevron-left"></i> 使用React实现无限下拉加载列表
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/技术/2017-07-27-webpack-HMR/" rel="prev" title="webpack HMR插件原理浅析">
+                webpack HMR插件原理浅析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/my_avatar.png" alt="Martin Cai">
+            
+              <p class="site-author-name" itemprop="name">Martin Cai</p>
+              <p class="site-description motion-element" itemprop="description">Coding, Travelling, Reading and Enjoying</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                    <span class="site-state-item-count">1</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">26</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/cauu" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:cauu@163.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#编译原理"><span class="nav-number">1.</span> <span class="nav-text">编译原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#词法分析"><span class="nav-number">2.</span> <span class="nav-text">词法分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#语法分析"><span class="nav-number">3.</span> <span class="nav-text">语法分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#语义分析-Elaborator"><span class="nav-number">4.</span> <span class="nav-text">语义分析(Elaborator)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#生成目标代码"><span class="nav-number">5.</span> <span class="nav-text">生成目标代码</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Martin Cai</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">90k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点总阅读时长">1:30</span>
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动 v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" rel="external nofollow" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/reading_progress/reading_progress.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <script src="/lib/bookmark/bookmark.min.js?v=1.0"></script>
+  <script type="text/javascript">
+  
+    bookmark.scrollToMark('auto', "#more");
+  
+  </script>
+
+
+</body>
+</html>

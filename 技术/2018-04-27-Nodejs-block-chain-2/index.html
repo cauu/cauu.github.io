@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/my_favicon.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/my_favicon.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前一篇文章中，我们实现了区块链基本的数据结构：通过哈希值，将一个一个区块串联在了一起。不过，在这个实现中，有一个明显的问题：我们的系统没有任何权限控制的机制限制用户对区块链的操作，任何人都可以轻易通过addBlock函数向区块链中添加新的区块。可以想象，如果网络中的每个节点都随意的向区块链中添加数据，那么区块链将会变成一张混乱无序的图，链唯一性和可靠性就无从谈起。为了解决这个问题，中本聪创造性的提">
+<meta name="keywords" content="javascript,nodejs,blockchain">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NodeJS撸一个简单的区块链（二）">
+<meta property="og:url" content="http://cauu.online/技术/2018-04-27-Nodejs-block-chain-2/index.html">
+<meta property="og:site_name" content="Martin&#39;s Dean">
+<meta property="og:description" content="前一篇文章中，我们实现了区块链基本的数据结构：通过哈希值，将一个一个区块串联在了一起。不过，在这个实现中，有一个明显的问题：我们的系统没有任何权限控制的机制限制用户对区块链的操作，任何人都可以轻易通过addBlock函数向区块链中添加新的区块。可以想象，如果网络中的每个节点都随意的向区块链中添加数据，那么区块链将会变成一张混乱无序的图，链唯一性和可靠性就无从谈起。为了解决这个问题，中本聪创造性的提">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-08T03:33:08.864Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NodeJS撸一个简单的区块链（二）">
+<meta name="twitter:description" content="前一篇文章中，我们实现了区块链基本的数据结构：通过哈希值，将一个一个区块串联在了一起。不过，在这个实现中，有一个明显的问题：我们的系统没有任何权限控制的机制限制用户对区块链的操作，任何人都可以轻易通过addBlock函数向区块链中添加新的区块。可以想象，如果网络中的每个节点都随意的向区块链中添加数据，那么区块链将会变成一张混乱无序的图，链唯一性和可靠性就无从谈起。为了解决这个问题，中本聪创造性的提">
+
+
+
+
+
+
+  <link rel="canonical" href="http://cauu.online/技术/2018-04-27-Nodejs-block-chain-2/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>NodeJS撸一个简单的区块链（二） | Martin's Dean</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-100475240-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-100475240-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <a href="https://github.com/cauu" target="_blank" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Martin's Dean</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Cast a cold eye, on Life on Death, Horseman, 123!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories menu-item-active">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">1</span>
+      </a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">26</span>
+      </a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-timelines">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>时间轴</a>
+</li>
+
+      
+
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauu.online/技术/2018-04-27-Nodejs-block-chain-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Martin Cai">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/my_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Martin's Dean">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">NodeJS撸一个简单的区块链（二）</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-26T23:00:00+00:00">2018-04-27</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                <span title="字数统计">5k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                <span title="阅读时长">0:05</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><a href="https://cauu.github.io/2018/03/Nodejs-block-chain-1/" target="_blank" rel="noopener">前一篇文章</a>中，我们实现了区块链基本的数据结构：通过哈希值，将一个一个区块串联在了一起。不过，在这个实现中，有一个明显的问题：我们的系统没有任何权限控制的机制限制用户对区块链的操作，任何人都可以轻易通过<code>addBlock</code>函数向区块链中添加新的区块。可以想象，如果网络中的每个节点都随意的向区块链中添加数据，那么区块链将会变成一张混乱无序的图，链唯一性和可靠性就无从谈起。为了解决这个问题，中本聪创造性的提出了POW算法。</p>
+<a id="more"></a>
+<h4 id="POW算法（工作量证明机制）的原理"><a href="#POW算法（工作量证明机制）的原理" class="headerlink" title="POW算法（工作量证明机制）的原理"></a>POW算法（工作量证明机制）的原理</h4><p>以比特币为例，当节点希望获得向比特币的链中添加一个新的区块时，它首先需要解决一个数学难题。如果它成功解出这道题目，它将会把题目和“答案”一起广播到比特币网络中，供其他节点验证，验证通过的节点会将新的区块添加到它的区块链末尾。另一方面，同一时间可能会有多个节点算出答案，这时，链可能会分叉，为了避免这种情况，网络中的节点始终会以最长的链作为有效的结果。当节点收到一条更长的链的广播时，它就会把本地数据替换为更长的那条链。通过这种方式，网络中的所有节点在一定时间周期之后得以达成一致，即基于算法正确性和最长链原则的共识算法。</p>
+<p>事实上，如果把比特币的网络类比于现实世界，那么在比特币就是这个网络的工资，矿工则是网络中的工人。节点必须付出劳动（算力），才能获得相应的报酬，节点的劳动成本推高了币价，而币价的上涨又刺激节点提供更多的算力，进而形成一个正向的反馈。一旦这个反馈形成，节点就会不遗余力的去维护网络的正常运行，整个网络以一种自发的方式不断运行下去。</p>
+<h4 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h4><p>之前我们通过<code>addBlock</code>函数添加新的区块。加入POW算法之后，添加区块之前，我们必须解出一道复杂的数学题目，这里我们采用比特币类似的算法sha256。</p>
+<p>对任意数据进行sha256计算，我们都能得到一个256位的唯一值。比特币会提供一个难度系数（比如4），我们的目标就是找到一个数n，使得sha256(n) &lt; 00001…..0(256位)成立。下面我们看看怎么去实现这一过程:</p>
+<p>首先，定义难度系数:</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="attribute">const targetBits</span> = 8;</span><br></pre></td></tr></table></figure>
+<p>在比特币的网络中，难度系数会动态的进行调整，使得无论算力大小，都可以保证平均的出块时间为10分钟。但此处，我们会把它写死。</p>
+<p>接着，定义POW算法: </p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">POW</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(block, targetNonce) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.block = block;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.targetNonce = targetNonce;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  prepareData(nonce) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.block.prevBlockHash</span><br><span class="line"></span><br><span class="line">      + <span class="keyword">this</span>.block.<span class="keyword">data</span></span><br><span class="line"></span><br><span class="line">      + <span class="keyword">this</span>.block.timeStamp</span><br><span class="line"></span><br><span class="line">      + targetBits</span><br><span class="line"></span><br><span class="line">      + nonce</span><br><span class="line"></span><br><span class="line">    ;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  validate() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">data</span> = <span class="keyword">this</span>.prepareData(<span class="keyword">this</span>.block.nonce);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> hash = sha256(<span class="keyword">data</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.targetNonce.greater(bigInt(hash, <span class="number">16</span>));</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  run() &#123;</span><br><span class="line"></span><br><span class="line">    let nonce = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    let hash;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(nonce &lt; Number.MAX_VALUE) &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">const</span> <span class="keyword">data</span> = <span class="keyword">this</span>.prepareData(nonce);</span><br><span class="line"></span><br><span class="line">      hash = sha256(<span class="keyword">data</span>);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span>(<span class="keyword">this</span>.targetNonce.greater(bigInt(hash, <span class="number">16</span>))) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line">        nonce++;</span><br><span class="line"></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line"></span><br><span class="line">      nonce,</span><br><span class="line"></span><br><span class="line">      hash</span><br><span class="line"></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中的核心方法是<code>run</code>函数，它通过while循环不断改变nonce，最终找到一个满足公式的nonce。validate函数则用于验证区块提供的答案的合理性。</p>
+<p>由于js不支持对256位数字的运算,此处我们用到了<code>bigInt</code>库,通过它提供的<code>greater</code>方法对大数字进行比较.</p>
+<p>接着修改<code>newBlock</code>函数,使得pow算法成为创建一个新区块的前置条件:</p>
+<figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">newBlock</span><span class="params">(data, prevBlockHash)</span> <span class="comment">&#123;</span></span></span><br><span class="line"><span class="function"><span class="comment"></span></span></span><br><span class="line"><span class="function"><span class="comment">    // ...</span></span></span><br><span class="line"><span class="function"><span class="comment"></span></span></span><br><span class="line"><span class="function"><span class="comment">    const &#123; nonce, hash &#125;</span> = <span class="title">POW</span>.<span class="title">newProofOfWork</span><span class="params">(<span class="keyword">block</span>)</span>.<span class="title">run</span><span class="params">()</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">block</span>.hash = hash;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">block</span>.nonce = nonce;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ....</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后, 修改一下<code>index.js</code>, 我们就可以模拟一个简单的挖矿操作了.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">const</span> bigInt = <span class="built_in">require</span>(<span class="string">'big-integer'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> sha256 = <span class="built_in">require</span>(<span class="string">'sha256'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> moment = <span class="built_in">require</span>(<span class="string">'moment'</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> BlockChain = <span class="built_in">require</span>(<span class="string">'./chain'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> POW = <span class="built_in">require</span>(<span class="string">'./pow'</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> chain = BlockChain.newBlockChain();</span><br><span class="line"></span><br><span class="line">process.stdout.write(<span class="string">'\n'</span>);</span><br><span class="line"></span><br><span class="line">chain.addBlock(<span class="string">'My first transaction!'</span>);</span><br><span class="line"></span><br><span class="line">chain.addBlock(<span class="string">'My second transaction!'</span>);</span><br><span class="line"></span><br><span class="line">process.stdout.write(<span class="string">'\n'</span>);</span><br><span class="line"></span><br><span class="line">chain.blocks.map(<span class="function">(<span class="params">block, index</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> &#123;prevBlockHash, data, hash, timeStamp&#125; = block;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`Block<span class="subst">$&#123;index&#125;</span>`</span>);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`PrevHash: <span class="subst">$&#123;prevBlockHash || <span class="string">'无'</span>&#125;</span>`</span>);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`data: <span class="subst">$&#123;data&#125;</span>`</span>);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`hash: <span class="subst">$&#123;hash&#125;</span>`</span>);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`createdAt: <span class="subst">$&#123;moment(timeStamp).format(<span class="string">'YYYY-MM-DD hh:mm:ss'</span>)&#125;</span>`</span>);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`POW: <span class="subst">$&#123;POW.newProofOfWork(block).validate()&#125;</span>`</span>);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'---------------------------------'</span>);</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>输出为:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="string">正在计算:</span> <span class="string">00b56b1d2d21e944c94c19ddbff3243513a57a76a0436275a4b25c8b065e27c7</span></span><br><span class="line"></span><br><span class="line"><span class="string">正在计算:</span> <span class="string">0099ba9f6cc82b345be2726d3efdf80b391cb5322ddf53057e2e34a6e8e8ecb8</span></span><br><span class="line"></span><br><span class="line"><span class="string">Block0</span></span><br><span class="line"></span><br><span class="line"><span class="attr">PrevHash:</span> <span class="string">无</span></span><br><span class="line"></span><br><span class="line"><span class="attr">data:</span> <span class="string">GenesisBlock</span></span><br><span class="line"></span><br><span class="line"><span class="attr">hash:</span> <span class="string">00b56b1d2d21e944c94c19ddbff3243513a57a76a0436275a4b25c8b065e27c7</span></span><br><span class="line"></span><br><span class="line"><span class="attr">createdAt:</span> <span class="number">2018</span><span class="number">-04</span><span class="number">-27</span> <span class="number">10</span><span class="string">:23:31</span></span><br><span class="line"></span><br><span class="line"><span class="attr">POW:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="string">---------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="string">Block1</span></span><br><span class="line"></span><br><span class="line"><span class="attr">PrevHash:</span> <span class="string">00b56b1d2d21e944c94c19ddbff3243513a57a76a0436275a4b25c8b065e27c7</span></span><br><span class="line"></span><br><span class="line"><span class="attr">data:</span> <span class="string">My</span> <span class="string">first</span> <span class="string">transaction!</span></span><br><span class="line"></span><br><span class="line"><span class="attr">hash:</span> <span class="string">00bbeb8b4ce5705cff4ea687a61d44e6444462e8ba69341de1531de9bd636edd</span></span><br><span class="line"></span><br><span class="line"><span class="attr">createdAt:</span> <span class="number">2018</span><span class="number">-04</span><span class="number">-27</span> <span class="number">10</span><span class="string">:23:31</span></span><br><span class="line"></span><br><span class="line"><span class="attr">POW:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="string">---------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="string">Block2</span></span><br><span class="line"></span><br><span class="line"><span class="attr">PrevHash:</span> <span class="string">00bbeb8b4ce5705cff4ea687a61d44e6444462e8ba69341de1531de9bd636edd</span></span><br><span class="line"></span><br><span class="line"><span class="attr">data:</span> <span class="string">My</span> <span class="string">second</span> <span class="string">transaction!</span></span><br><span class="line"></span><br><span class="line"><span class="attr">hash:</span> <span class="string">0099ba9f6cc82b345be2726d3efdf80b391cb5322ddf53057e2e34a6e8e8ecb8</span></span><br><span class="line"></span><br><span class="line"><span class="attr">createdAt:</span> <span class="number">2018</span><span class="number">-04</span><span class="number">-27</span> <span class="number">10</span><span class="string">:23:31</span></span><br><span class="line"></span><br><span class="line"><span class="attr">POW:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="string">---------------------------------</span></span><br></pre></td></tr></table></figure>
+<p>当难度系数为8时,我们很快就找到了两个这样的数字<code>00b56b1d2d21e944c94c19ddbff3243513a57a76a0436275a4b25c8b065e27c7</code>和<code>00bbeb8b4ce5705cff4ea687a61d44e6444462e8ba69341de1531de9bd636edd</code>, 并基于它们创建了新的区块.如果感兴趣,可以适当调整这个难度系数, 可以看到,当难度系数足够大时, 挖矿会持续相当长的时间。</p>
+<h4 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h4><p>本章结束之后，我们的区块链又向前迈进了一小步：现在创建新的区块需要挖矿了。不过由于当前只有一个节点运行，因此我们还不能对挖矿的结果达成共识。另一个很明显的缺陷是，当前区块链的信息是保存在内存中，当程序关闭时，区块的信息就会丢失。在下一章我们会实现对区块链的持久化处理。</p>
+<p>参考:</p>
+<p><a href="https://www.zhihu.com/question/29010688" target="_blank" rel="noopener">js中最大安全整数类型</a></p>
+<p><a href="https://blog.csdn.net/lhq186/article/details/77343201" target="_blank" rel="noopener">比特币的区块与共识</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Martin Cai</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://cauu.online/技术/2018-04-27-Nodejs-block-chain-2/" title="NodeJS撸一个简单的区块链（二）">http://cauu.online/技术/2018-04-27-Nodejs-block-chain-2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+            <a href="/tags/nodejs/" rel="tag"># nodejs</a>
+          
+            <a href="/tags/blockchain/" rel="tag"># blockchain</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/技术/2018-03-20-Nodejs-block-chain-1/" rel="next" title="Nodejs撸一个简单的区块链（一）">
+                <i class="fa fa-chevron-left"></i> Nodejs撸一个简单的区块链（一）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/技术/2018-05-02-Nodejs-block-chain-3/" rel="prev" title="NodeJS撸一个简单的区块链（三）">
+                NodeJS撸一个简单的区块链（三） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/my_avatar.png" alt="Martin Cai">
+            
+              <p class="site-author-name" itemprop="name">Martin Cai</p>
+              <p class="site-description motion-element" itemprop="description">Coding, Travelling, Reading and Enjoying</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                    <span class="site-state-item-count">1</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">26</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/cauu" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:cauu@163.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#POW算法（工作量证明机制）的原理"><span class="nav-number">1.</span> <span class="nav-text">POW算法（工作量证明机制）的原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#具体实现"><span class="nav-number">2.</span> <span class="nav-text">具体实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结论"><span class="nav-number">3.</span> <span class="nav-text">结论</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Martin Cai</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">90k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点总阅读时长">1:30</span>
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动 v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" rel="external nofollow" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/reading_progress/reading_progress.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <script src="/lib/bookmark/bookmark.min.js?v=1.0"></script>
+  <script type="text/javascript">
+  
+    bookmark.scrollToMark('auto', "#more");
+  
+  </script>
+
+
+</body>
+</html>

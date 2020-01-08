@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/my_favicon.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/my_favicon.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="这次，我们的目标是开发一个网页版猜拳小游戏。首先看看最终的效果图：  瞄一眼效果图，游戏玩法大致可以了解个七七八八了。很简单，用户从石头剪刀布中随便选一个并出拳后，电脑也会随机（实际上是根据服务端的返回值）做出选择，之后判断用户和点小融之间的胜负，弹出相应的动画即可。 游戏的玩法虽然简单，但实际的开发过程中，坑还是不少。下面我们从头梳理一下开发的过程。">
+<meta name="keywords" content="javascript,react,game">
+<meta property="og:type" content="article">
+<meta property="og:title" content="开发一个h5小游戏">
+<meta property="og:url" content="http://cauu.online/技术/2017-09-05-h5/index.html">
+<meta property="og:site_name" content="Martin&#39;s Dean">
+<meta property="og:description" content="这次，我们的目标是开发一个网页版猜拳小游戏。首先看看最终的效果图：  瞄一眼效果图，游戏玩法大致可以了解个七七八八了。很简单，用户从石头剪刀布中随便选一个并出拳后，电脑也会随机（实际上是根据服务端的返回值）做出选择，之后判断用户和点小融之间的胜负，弹出相应的动画即可。 游戏的玩法虽然简单，但实际的开发过程中，坑还是不少。下面我们从头梳理一下开发的过程。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://note.wiz.cn/api/document/files/unzip/932acc41-26bc-4f6d-9db2-df37eeccebf5/281ca4c2-848c-455c-ac54-c247e6326498.9002/index_files/1367837527.png">
+<meta property="og:updated_time" content="2020-01-08T03:33:08.864Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="开发一个h5小游戏">
+<meta name="twitter:description" content="这次，我们的目标是开发一个网页版猜拳小游戏。首先看看最终的效果图：  瞄一眼效果图，游戏玩法大致可以了解个七七八八了。很简单，用户从石头剪刀布中随便选一个并出拳后，电脑也会随机（实际上是根据服务端的返回值）做出选择，之后判断用户和点小融之间的胜负，弹出相应的动画即可。 游戏的玩法虽然简单，但实际的开发过程中，坑还是不少。下面我们从头梳理一下开发的过程。">
+<meta name="twitter:image" content="https://note.wiz.cn/api/document/files/unzip/932acc41-26bc-4f6d-9db2-df37eeccebf5/281ca4c2-848c-455c-ac54-c247e6326498.9002/index_files/1367837527.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://cauu.online/技术/2017-09-05-h5/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>开发一个h5小游戏 | Martin's Dean</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-100475240-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-100475240-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <a href="https://github.com/cauu" target="_blank" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Martin's Dean</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Cast a cold eye, on Life on Death, Horseman, 123!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories menu-item-active">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">1</span>
+      </a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">26</span>
+      </a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-timelines">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>时间轴</a>
+</li>
+
+      
+
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauu.online/技术/2017-09-05-h5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Martin Cai">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/my_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Martin's Dean">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">开发一个h5小游戏</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-04T23:00:00+00:00">2017-09-05</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                <span title="字数统计">9k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                <span title="阅读时长">0:09</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这次，我们的目标是开发一个网页版猜拳小游戏。首先看看最终的效果图：</p>
+<p><img src="https://note.wiz.cn/api/document/files/unzip/932acc41-26bc-4f6d-9db2-df37eeccebf5/281ca4c2-848c-455c-ac54-c247e6326498.9002/index_files/1367837527.png"></p>
+<p>瞄一眼效果图，游戏玩法大致可以了解个七七八八了。很简单，用户从石头剪刀布中随便选一个并出拳后，电脑也会随机（实际上是根据服务端的返回值）做出选择，之后判断用户和点小融之间的胜负，弹出相应的动画即可。</p>
+<p>游戏的玩法虽然简单，但实际的开发过程中，坑还是不少。下面我们从头梳理一下开发的过程。</p>
+<a id="more"></a>
+<h4 id="游戏的本质就是一个状态机"><a href="#游戏的本质就是一个状态机" class="headerlink" title="游戏的本质就是一个状态机"></a>游戏的本质就是一个状态机</h4><p>无论多么复杂的游戏，本质上都是一个根据用户的输入切换到不同的状态，并播放相应动画的状态机，其中处理的逻辑可能有难易之分，但终究逃脱不了状态机的本质。拿最近最火的王者荣耀来举例，从游戏的最上层俯瞰，我们可以将游戏分为以下几个状态:</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">INIT、LOADING、LOBBY、PLAYING、<span class="keyword">END</span></span><br></pre></td></tr></table></figure>
+<p>当我们打开游戏时，游戏处于INIT状态，播放完开场动画后，就进入了LOADING状态，LOADING结束之后游戏自动切换到LOBBY状态，在这里，用户可以选择不同的游戏模式开始游戏。一旦游戏开始，游戏就切换到最重要的PLAYING状态了，一局游戏结束，游戏END。</p>
+<p>实际上，上到整个游戏，小到游戏中的一个中立生物，他们的行为都可以用状态机来控制。就拿PLAYING状态时，我们操纵的英雄来说，他的行为也可以用状态机来理解：</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">IDOL, WALKING, TURNING, <span class="keyword">USE</span> SKILL, ATTACK</span><br></pre></td></tr></table></figure>
+<p>当我们不执行任何操作时，英雄处于IDOL状态，滑动方向轮盘，英雄进入行走状态，点击不同的指令（攻击、技能），英雄进入相应的状态（Attack、USE SKILL），并播放对应的动画。</p>
+<p>既然王者荣耀这样复杂的游戏都可以通过状态机进行拆分，用它来处理我们的小游戏自然是不在话下。</p>
+<p>这里我定义了四种状态</p>
+<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">INIT,</span> PLAY, SUCCESS, FAILED</span><br></pre></td></tr></table></figure>
+<p>在非PALY状态下，用户可以进行操作（选择、出拳），一旦进入PLAY状态，我们就开始播放游戏动画并等待游戏结果，此时，用户将无法执行其他任何操作。当我们获得游戏结果且动画播放完毕之后，我们就会进入结束状态（SUCCESS、FAILED）并播放相应的结束动画，此时用户又可以进行操作了。</p>
+<h4 id="自然的手臂摇动动画"><a href="#自然的手臂摇动动画" class="headerlink" title="自然的手臂摇动动画"></a>自然的手臂摇动动画</h4><p>游戏进入PLAYING状态时，会播放摇手动画。对于这个动画，除了最基本的自然、流畅，我们还希望无论什么时候获得游戏的结果（这个结果是通过AJAX在服务端获取），我们的手臂一定会摆回正中，再切换到对应的石头/剪刀/布的图片。</p>
+<p>先谈谈自然流畅。我们希望的是，手臂摇动时是以底部为轴进行旋转，当手臂摆动时，拳头摆动的幅度应该比手臂摆动的幅度更大（否则像跳机械舞）。因此手臂和拳头应该是分开的两张图片，且我们要对他们分别执行不同的动画:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">   <span class="string">@keyframes</span> <span class="string">fist-animation</span> <span class="string">&#123;</span></span><br><span class="line"></span><br><span class="line">     <span class="number">0</span><span class="string">%</span> <span class="string">&#123;</span></span><br><span class="line"></span><br><span class="line">       <span class="string">-webkit-transform:</span> <span class="string">translate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">1</span><span class="string">,</span> <span class="string">0deg)</span> <span class="string">;</span></span><br><span class="line"></span><br><span class="line">       <span class="attr">transform:</span> <span class="string">translate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">1</span><span class="string">,</span> <span class="string">0deg);</span></span><br><span class="line"></span><br><span class="line">     <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">     <span class="number">25</span><span class="string">%</span> <span class="string">&#123;</span></span><br><span class="line"></span><br><span class="line">       <span class="string">-webkit-transform:</span> <span class="string">translate3d(33%,</span> <span class="number">10</span><span class="string">%,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">1</span><span class="string">,</span> <span class="string">35deg)</span> <span class="string">;</span></span><br><span class="line"></span><br><span class="line">       <span class="attr">transform:</span> <span class="string">translate3d(33%,</span> <span class="number">10</span><span class="string">%,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">1</span><span class="string">,</span> <span class="string">35deg)</span> <span class="string">;</span></span><br><span class="line"></span><br><span class="line">     <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">     <span class="number">50</span><span class="string">%</span> <span class="string">&#123;</span></span><br><span class="line"></span><br><span class="line">       <span class="string">-webkit-transform:</span> <span class="string">translate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">1</span><span class="string">,</span> <span class="string">0deg)</span> <span class="string">;</span></span><br><span class="line"></span><br><span class="line">       <span class="attr">transform:</span> <span class="string">translate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">1</span><span class="string">,</span> <span class="string">0deg)</span> <span class="string">;</span></span><br><span class="line"></span><br><span class="line">     <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">     <span class="number">75</span><span class="string">%</span> <span class="string">&#123;</span></span><br><span class="line"></span><br><span class="line">       <span class="string">-webkit-transform:</span> <span class="string">translate3d(-33%,</span> <span class="number">10</span><span class="string">%,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">1</span><span class="string">,</span> <span class="string">-35deg)</span> <span class="string">;</span></span><br><span class="line"></span><br><span class="line">       <span class="attr">transform:</span> <span class="string">translate3d(-33%,</span> <span class="number">10</span><span class="string">%,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">1</span><span class="string">,</span> <span class="string">-35deg)</span> <span class="string">;</span></span><br><span class="line"></span><br><span class="line">     <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">     <span class="number">100</span><span class="string">%</span> <span class="string">&#123;</span></span><br><span class="line"></span><br><span class="line">       <span class="string">-webkit-transform:</span> <span class="string">translate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">1</span><span class="string">,</span> <span class="string">0deg)</span> <span class="string">;</span></span><br><span class="line"></span><br><span class="line">       <span class="attr">transform:</span> <span class="string">translate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">1</span><span class="string">,</span> <span class="string">0deg);</span></span><br><span class="line"></span><br><span class="line">     <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line">   <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">   <span class="string">@keyframes</span> <span class="string">arm-animation</span> <span class="string">&#123;</span></span><br><span class="line"></span><br><span class="line">     <span class="number">0</span><span class="string">%</span> <span class="string">&#123;</span></span><br><span class="line"></span><br><span class="line">       <span class="string">-webkit-transform:</span> <span class="string">translate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate(0deg)</span> <span class="string">;</span></span><br><span class="line"></span><br><span class="line">       <span class="attr">transform:</span> <span class="string">translate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate(0deg);</span></span><br><span class="line"></span><br><span class="line">     <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">     <span class="number">25</span><span class="string">%</span> <span class="string">&#123;</span></span><br><span class="line"></span><br><span class="line">       <span class="string">-webkit-transform:</span> <span class="string">translate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate(10deg)</span> <span class="string">;</span></span><br><span class="line"></span><br><span class="line">       <span class="attr">transform:</span> <span class="string">translate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate3d(10deg)</span> <span class="string">;</span></span><br><span class="line"></span><br><span class="line">       <span class="attr">transform-origin:</span> <span class="string">center</span> <span class="string">bottom;</span></span><br><span class="line"></span><br><span class="line">     <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">     <span class="number">50</span><span class="string">%</span> <span class="string">&#123;</span></span><br><span class="line"></span><br><span class="line">       <span class="string">-webkit-transform:</span> <span class="string">translate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate(0deg)</span> <span class="string">;</span></span><br><span class="line"></span><br><span class="line">       <span class="attr">transform:</span> <span class="string">translate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate(</span> <span class="string">0deg)</span> <span class="string">;</span></span><br><span class="line"></span><br><span class="line">     <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">     <span class="number">75</span><span class="string">%</span> <span class="string">&#123;</span></span><br><span class="line"></span><br><span class="line">       <span class="string">-webkit-transform:</span> <span class="string">translate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate(-10deg)</span> <span class="string">;</span></span><br><span class="line"></span><br><span class="line">       <span class="attr">transform:</span> <span class="string">translate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate(-10deg)</span> <span class="string">;</span></span><br><span class="line"></span><br><span class="line">       <span class="attr">transform-origin:</span> <span class="string">center</span> <span class="string">bottom;</span></span><br><span class="line"></span><br><span class="line">     <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">     <span class="number">100</span><span class="string">%</span> <span class="string">&#123;</span></span><br><span class="line"></span><br><span class="line">       <span class="attr">height:</span> <span class="string">px2rem(171);</span></span><br><span class="line"></span><br><span class="line">       <span class="string">-webkit-transform:</span> <span class="string">translate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate(0deg)</span> <span class="string">;</span></span><br><span class="line"></span><br><span class="line">       <span class="attr">transform:</span> <span class="string">translate3d(0,</span> <span class="number">0</span><span class="string">,</span> <span class="number">0</span><span class="string">)</span> <span class="string">rotate(0deg);</span></span><br><span class="line"></span><br><span class="line">     <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line">   <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"> <span class="string">//</span> <span class="string">对arm和fist分别应用上面的动画</span></span><br><span class="line"></span><br><span class="line"> <span class="string">.arm</span> <span class="string">&#123;</span></span><br><span class="line"></span><br><span class="line">     <span class="string">//</span> <span class="string">...</span></span><br><span class="line"></span><br><span class="line">     <span class="attr">animtion:</span> <span class="string">arm-animation</span> <span class="number">0.</span><span class="string">5s</span> <span class="string">infinite</span> <span class="string">ease-in-out;</span></span><br><span class="line"></span><br><span class="line"> <span class="string">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="string">.fist</span> <span class="string">&#123;</span></span><br><span class="line"></span><br><span class="line">     <span class="string">//</span> <span class="string">...</span></span><br><span class="line"></span><br><span class="line">     <span class="attr">animtion:</span> <span class="string">fist-animation</span> <span class="number">0.</span><span class="string">5s</span> <span class="string">infinite</span> <span class="string">ease-in-out;</span></span><br><span class="line"></span><br><span class="line"> <span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>手臂摇动的重点是设置它的transform-origin属性，让它相对底部中心进行摆动，拳头摆动的重点则是在摆动同时，给它增加一个小小的位移。</p>
+<p>接着看第二点，保证PLAY状态结束时，手臂始终会摆到屏幕正再出拳。</p>
+<p>对这个问题，我们可以换个角度思考：<strong><em>只要保证每次接口返回的时间一定是动画播放时间的整数倍，那么动画一定会回到正中。</em></strong></p>
+<p>于是，我们可以用一个Promise来包装我们的异步函数，让它始终会在0.5的整数倍时间之后再执行回调:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">const</span> returnAfter = <span class="function"><span class="keyword">function</span> (<span class="params">ms</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="function">(<span class="params">func</span>) =&gt;</span> <span class="keyword">async</span> <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> result;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> beat = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">let</span> timer = setInterval(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(!!result) &#123;</span><br><span class="line"></span><br><span class="line">          resolve(result);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">          clearInterval(timer);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">      &#125;, ms);</span><br><span class="line"></span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    result = <span class="keyword">await</span> func.apply(<span class="literal">null</span>, <span class="built_in">arguments</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> beat;</span><br><span class="line"></span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="页面滑动、回弹效果的实现"><a href="#页面滑动、回弹效果的实现" class="headerlink" title="页面滑动、回弹效果的实现"></a>页面滑动、回弹效果的实现</h4><p>最后一个“小小的”需求是，当用户drag页面的幅度较小时，页面会回弹。如果用户drag的幅度较大（进入了下一页的范围），那么就进入下一页。当用户快速滑动超过某个阈值时，也会触发翻页的效果。</p>
+<p>这个效果实现的原理说起来并不复杂：</p>
+<p>首先，使用preventDefault来避免触发页面的滚动事件，接着分别监听容器的touchstart，touchmove和touchend事件。如果touchend和touchstart事件发生的间隔较小(eg: &lt;200ms)，且移动距离足够长（eg: &gt; 300px)，则认定为swipe事件，并触发翻页效果。如果end和start之间间隔较大，则让页面随着手指的滑动进行滚动，当touchend事件回调时，判断容器的scrollTop属性，来决定是停留在当前页面还是进入下一页。</p>
+<p>说起来简单，但做起来的坑还不少:</p>
+<ol>
+<li><p>如何保证mouse事件和touch事件的同步?</p>
+</li>
+<li><p>preventdefault后，页面上原有按钮的点击事件无法触发，应该如何处理?（如果不对按钮的事件进行preventdefault，那么当用户在按钮上拖动时，页面原本的scroll事件就会触发）</p>
+</li>
+<li><p>如何实现一个自然的页面回弹效果？</p>
+</li>
+</ol>
+<p>下面，我们来一一解答这几个问题：</p>
+<h5 id="1-保证mouse事件和touch事件的同步"><a href="#1-保证mouse事件和touch事件的同步" class="headerlink" title="1. 保证mouse事件和touch事件的同步"></a>1. 保证mouse事件和touch事件的同步</h5><p>事实上现在绝大部分h5都不需要兼容pc端，因此保持mouse和touch事件的同步可以看做是对页面的优化，实现起来也很简单：只需要保证mousedown和touchstart，mousemove和touchmove，mouseup和touchend事件的回调函数一致即可。</p>
+<p>在项目中，为了简化事件处理的流程，用到了rxjs，看看rxjs对这个问题的解决方案也是蛮有意思的一点:</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">let</span> mouseDowns = <span class="literal">Rx</span>.Observable.fromEvent(domItem, <span class="string">"mousedown"</span>).<span class="built_in">map</span>(mouseEventToCoordinate).<span class="keyword">do</span>(() =&gt; console.<span class="keyword">log</span>(<span class="string">'mouse down'</span>));</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> touchStart = <span class="literal">Rx</span>.Observable.fromEvent(domItem, <span class="string">'touchstart'</span>).<span class="built_in">map</span>(mouseEventToCoordinate).<span class="keyword">do</span>(() =&gt; console.<span class="keyword">log</span>(<span class="string">'mouse down'</span>));</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> start = mouseDowns.merge(touchStart);</span><br></pre></td></tr></table></figure>
+<p>受限于篇幅，这里就不展开聊rxjs对翻页、滚动、点击事件的处理了。</p>
+<h5 id="2-当页面的所有事件都被container“吞掉”后，如何触发按钮的click事件？"><a href="#2-当页面的所有事件都被container“吞掉”后，如何触发按钮的click事件？" class="headerlink" title="2. 当页面的所有事件都被container“吞掉”后，如何触发按钮的click事件？"></a>2. 当页面的所有事件都被container“吞掉”后，如何触发按钮的click事件？</h5><p>通过elementFromPoint我们可以找到点击事件对应的低层节点，再手动触发这个dom节点的click事件:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">observer.clicks.forEach(<span class="function">(<span class="params">&#123; x, y &#125;</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> elem = <span class="built_in">document</span>.elementFromPoint(x, y);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> click = <span class="keyword">new</span> Event(<span class="string">'click'</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(elem.click) &#123;</span><br><span class="line"></span><br><span class="line">    elem.click();</span><br><span class="line"></span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span>(elem.onclick) &#123;</span><br><span class="line"></span><br><span class="line">   elem.onclick();</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h5 id="3-实现自然的回弹效果"><a href="#3-实现自然的回弹效果" class="headerlink" title="3. 实现自然的回弹效果"></a>3. 实现自然的回弹效果</h5><p>回弹效果就是一个简单的动画，通过requestAnimation函数，修改页面的scrollTop属性就可以实现回弹。</p>
+<p>需要强调的是，在css中，updater也叫做timing function，可以将他理解为一个随时间变化的函数。我们对对象属性的修改都可以在里面实现。</p>
+<p>简单贴一下代码:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">const playAnim = (startAt, duration) =&gt; (updater) =&gt; (delta) =&gt; &#123;</span><br><span class="line"></span><br><span class="line">  if(delta - startAt &gt; (duration + 1)) &#123;</span><br><span class="line"></span><br><span class="line">    updater &amp;&amp; updater(delta - startAt, duration);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    rAF &amp;&amp; cancelAnimationFrame(rAF);</span><br><span class="line"></span><br><span class="line">    return;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  updater &amp;&amp; updater(delta - startAt, duration);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  rAF = requestAnimationFrame(playAnim(startAt, duration)(updater));</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="为两个相似的活动”换肤”"><a href="#为两个相似的活动”换肤”" class="headerlink" title="为两个相似的活动”换肤”"></a>为两个相似的活动”换肤”</h4><p>除了猜拳，这次还同步开发了另一个翻牌子的小游戏。两个小游戏除了核心的动画外，按钮、边框、弹框样式等都只有颜色/贴图上的不同。一句话，要给猜拳换个皮肤。</p>
+<p>之前的做法是把活动的样式复制一份，再修改不同的地方，先明显，这种过时做法肯定不符合我们工程化的理念。如今有了sass，我们可以通过它，来复用我们的样式了。</p>
+<p>首先我们定义我们的游戏的主题:</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="variable">$theme</span>-<span class="selector-tag">a</span>: (</span><br><span class="line"></span><br><span class="line">   <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">   <span class="attribute">color</span>-bg: <span class="number">#fff</span>,</span><br><span class="line"></span><br><span class="line">   <span class="attribute">color</span>-border: <span class="number">#fff</span>,</span><br><span class="line"></span><br><span class="line">   <span class="comment">//...  </span></span><br><span class="line"></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="variable">$theme</span>-<span class="selector-tag">b</span>: (</span><br><span class="line"></span><br><span class="line"><span class="comment">//....</span></span><br><span class="line"></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="variable">$themes</span>: (</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">a</span>: <span class="variable">$theme</span>-<span class="selector-tag">a</span>,</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">b</span>: <span class="variable">$theme</span>-b</span><br><span class="line"></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>有了这几个对象，我们就可以用scss内置的map-get函数取得不同主题对应的css属性的值了，举个例子:</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="selector-tag">a</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">color</span>: <span class="built_in">map-get</span>(map-get($themes, a), color-bg);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当我们有新的主题时，我们只需要定义新的$theme-style对象即可。</p>
+<h4 id="坑爹的audio"><a href="#坑爹的audio" class="headerlink" title="坑爹的audio"></a>坑爹的audio</h4><p>众所周知,HTML5标准提供了对音频的支持, 因此在实现游戏音效的时候, 我天真的以为一个audio标签就可以搞定一切, 像这样:</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">// audio for bgm</span><br><span class="line"></span><br><span class="line">    &lt;audio </span><br><span class="line"></span><br><span class="line">      <span class="attr">ref="audio"</span></span><br><span class="line"></span><br><span class="line">      <span class="attr">autoPlay=&#123;</span> <span class="literal">true</span> &#125;</span><br><span class="line"></span><br><span class="line">      <span class="attr">controls=&#123;</span> <span class="literal">false</span> &#125;</span><br><span class="line"></span><br><span class="line">      <span class="attr">loop=&#123;</span> <span class="literal">true</span> &#125;</span><br><span class="line"></span><br><span class="line">      <span class="attr">src=&#123;</span> src &#125;</span><br><span class="line"></span><br><span class="line">      /&gt;</span><br></pre></td></tr></table></figure>
+<p>测试时,它在pc浏览器上的表现堪称完美: 打开网页,背景音乐响起, 播放完成之后, 自动回到开始,循环往复, 一切都如此顺利. 殊不知, 一个大坑正在前方等着我们.</p>
+<p>当我们关掉pc, 自信满满的在iphone的微信浏览器上访问我们的网页时, 突然感觉不对了:</p>
+<p>熟悉的音乐没有播放, 点击猜拳动画, 除了点击的一霎那, 会有挥舞拳头的音效, 动画结束之后的胜利/失败音效也没有如期响起.开始我以为是资源加载的问题, 于是采用import的方式, 将我们的音频资源通过webpack重新构建了一次, 然而一切依旧. 同事告诉我说他的android浏览器中音效是正常的, 于是我开始怀疑是ios safari浏览器的问题…</p>
+<p>一通百度谷歌之后, 终于锁定了问题的所在.caniuse可以查看所有标签在不同浏览器的兼容性,对<a href="http://caniuse.com/#feat=audio" target="_blank" rel="noopener">audio兼容性</a>, known issues中,是这样描述的:</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Chrome <span class="keyword">on</span> Android <span class="keyword">does</span> <span class="keyword">not</span> support changing playbackrate <span class="keyword">as</span> advised <span class="keyword">by</span> <span class="keyword">the</span> specification.</span><br><span class="line">Volume <span class="keyword">is</span> <span class="built_in">read</span>-only <span class="keyword">on</span> iOS.</span><br><span class="line">Chrome <span class="keyword">on</span> Android <span class="keyword">does</span> <span class="keyword">not</span> support autoplay <span class="keyword">as</span> advised <span class="keyword">by</span> <span class="keyword">the</span> specification.</span><br></pre></td></tr></table></figure>
+<p>如果只是如描述这般, 我们的IOS浏览器怎么会出问题呢?</p>
+<p>事实上, <code>除了chrome on android, IOS的safari也不支持autoplay, 同时他对loop的支持也存在一定的问题, 另外最新的android浏览器已经提供了对autoplay的支持</code>. 所以如今大部分问题都集中在IOS和老的Android系统中.</p>
+<p>光提出问题还不行, 针对这几个问题我们有什么好的解决方案吗?</p>
+<ul>
+<li>不能改变音量大小</li>
+</ul>
+<p>safari mobile限制了这种操作, 因此寄希望于代码, 我们只能老老实实的修改音频源文件了. 不过好消息是手机上音量的大部分人还是习惯通过手机自带的音量键来进行调节, 因此这不算一个大的问题</p>
+<ul>
+<li>不能自动播放</li>
+</ul>
+<p>如果仅仅只是不支持autoplay, 那么解决起来也许并不复杂: 大不了当音频加载完毕之后, 我们调用audio.play()方法手动播放它就好了. 但试过之后你会发现, 这么做一点卵用都没有, 事实上, 这背后不仅仅是禁止autoplay这么简单.</p>
+<p>首先, 我们看看苹果官方文档:</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">In</span> Safari on iOS (<span class="keyword">for</span> all devices, including iPad), where the<span class="built_in"> user </span>may be on a cellular<span class="built_in"> network </span><span class="keyword">and</span> be charged per data unit, preload <span class="keyword">and</span> autoplay are disabled. <span class="literal">No</span> data is loaded until the<span class="built_in"> user </span>initiates it. This means the JavaScript play() <span class="keyword">and</span> load() methods are also inactive until the<span class="built_in"> user </span>initiates playback, unless the play() <span class="keyword">or</span> load() method is triggered by<span class="built_in"> user </span>action.</span><br></pre></td></tr></table></figure>
+<p>翻译过来就是说:</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">为了防止网页偷跑流量,一切需要下载的资源都需要经过用户的同意才能进行. 也就是说, 音频的播放必须要在用户操作触发<span class="keyword">event</span>之后, 才能触发.我们不能通过代码去控制它.</span><br></pre></td></tr></table></figure>
+<p>苹果和谷歌在这个问题上达成了一致,因此Android浏览器中, 也不能自动播放音频.  但是, 微信似乎不是这么想的.</p>
+<p>如果我们的活动的主要是在微信浏览器中浏览, 我们可以通过微信提供的<a href="https://gist.github.com/ufologist/7c14837db642a6e916ce" target="_blank" rel="noopener">js-sdk实现自动播放</a>.</p>
+<p>但这个方法在safari中就不管用了.</p>
+<p>如果需要在safari中播放, 有两个选择:</p>
+<ol>
+<li><p>像很多H5页面一样, 提供一个播放/暂停的按钮, 进入页面的时候不播放音频, 让用户自己决定是否播放背景音乐.</p>
+</li>
+<li><p>监听window的touchstart事件, 当用户触发touchstart事件时, 开始播放音频, 一旦音频开始播放, 就删掉对该事件的监听. 具体实现可以参考<a href="https://gist.github.com/ufologist/50b4f2768126089c3e11" target="_blank" rel="noopener">这里</a></p>
+</li>
+</ol>
+<ul>
+<li>不能循环播放    </li>
+</ul>
+<p>在低版本的ios和android手机上, loop属性并不能如愿起作用, 因此, 如果我们希望实现一个循环播放的背景音乐, 一个更靠谱的做法是: 监听audio的onEnded事件, 当onEnded触发时, 我们再重新调用audio.play()播放音频. 代码如下:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">audio</span> <span class="attr">src</span>=<span class="string">"noise.mp3"</span> <span class="attr">onended</span>=<span class="string">"this.play();"</span> <span class="attr">controls</span>=<span class="string">"controls"</span> <span class="attr">autobuffer</span>&gt;</span><span class="tag">&lt;/<span class="name">audio</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Martin Cai</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://cauu.online/技术/2017-09-05-h5/" title="开发一个h5小游戏">http://cauu.online/技术/2017-09-05-h5/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+            <a href="/tags/react/" rel="tag"># react</a>
+          
+            <a href="/tags/game/" rel="tag"># game</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/技术/2017-08-01-Problem--Solution/" rel="next" title="浏览器兼容issues && solution">
+                <i class="fa fa-chevron-left"></i> 浏览器兼容issues && solution
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/技术/2017-09-11-ES6-extend-build-in-class--JS-inherit/" rel="prev" title="ES6 extend build in class && JS inherit">
+                ES6 extend build in class && JS inherit <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/my_avatar.png" alt="Martin Cai">
+            
+              <p class="site-author-name" itemprop="name">Martin Cai</p>
+              <p class="site-description motion-element" itemprop="description">Coding, Travelling, Reading and Enjoying</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                    <span class="site-state-item-count">1</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">26</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/cauu" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:cauu@163.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#游戏的本质就是一个状态机"><span class="nav-number">1.</span> <span class="nav-text">游戏的本质就是一个状态机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自然的手臂摇动动画"><span class="nav-number">2.</span> <span class="nav-text">自然的手臂摇动动画</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#页面滑动、回弹效果的实现"><span class="nav-number">3.</span> <span class="nav-text">页面滑动、回弹效果的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-保证mouse事件和touch事件的同步"><span class="nav-number">3.1.</span> <span class="nav-text">1. 保证mouse事件和touch事件的同步</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-当页面的所有事件都被container“吞掉”后，如何触发按钮的click事件？"><span class="nav-number">3.2.</span> <span class="nav-text">2. 当页面的所有事件都被container“吞掉”后，如何触发按钮的click事件？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-实现自然的回弹效果"><span class="nav-number">3.3.</span> <span class="nav-text">3. 实现自然的回弹效果</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#为两个相似的活动”换肤”"><span class="nav-number">4.</span> <span class="nav-text">为两个相似的活动”换肤”</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#坑爹的audio"><span class="nav-number">5.</span> <span class="nav-text">坑爹的audio</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Martin Cai</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">90k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点总阅读时长">1:30</span>
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动 v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" rel="external nofollow" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/reading_progress/reading_progress.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <script src="/lib/bookmark/bookmark.min.js?v=1.0"></script>
+  <script type="text/javascript">
+  
+    bookmark.scrollToMark('auto', "#more");
+  
+  </script>
+
+
+</body>
+</html>

@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/my_favicon.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/my_favicon.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="最近完成了质检系统第一阶段的开发，在实现的时候，加入了一些新的东西和之前较少用到的特性。总结下来，值得回味的大概有下面这几点：  通过react-router v4实现路由  使用import()函数实现模块的动态加载  react-container-query实现响应式的布局  通过react-url-query实现了对antd form状态管理的优化  学习并了解了g2的基本用法  实现了一">
+<meta name="keywords" content="react,react-router">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iqc system development">
+<meta property="og:url" content="http://cauu.online/技术/2018-02-05-iqc-system-development/index.html">
+<meta property="og:site_name" content="Martin&#39;s Dean">
+<meta property="og:description" content="最近完成了质检系统第一阶段的开发，在实现的时候，加入了一些新的东西和之前较少用到的特性。总结下来，值得回味的大概有下面这几点：  通过react-router v4实现路由  使用import()函数实现模块的动态加载  react-container-query实现响应式的布局  通过react-url-query实现了对antd form状态管理的优化  学习并了解了g2的基本用法  实现了一">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-08T03:33:08.864Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iqc system development">
+<meta name="twitter:description" content="最近完成了质检系统第一阶段的开发，在实现的时候，加入了一些新的东西和之前较少用到的特性。总结下来，值得回味的大概有下面这几点：  通过react-router v4实现路由  使用import()函数实现模块的动态加载  react-container-query实现响应式的布局  通过react-url-query实现了对antd form状态管理的优化  学习并了解了g2的基本用法  实现了一">
+
+
+
+
+
+
+  <link rel="canonical" href="http://cauu.online/技术/2018-02-05-iqc-system-development/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>iqc system development | Martin's Dean</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-100475240-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-100475240-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <a href="https://github.com/cauu" target="_blank" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Martin's Dean</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Cast a cold eye, on Life on Death, Horseman, 123!</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories menu-item-active">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">1</span>
+      </a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">26</span>
+      </a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-timelines">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>时间轴</a>
+</li>
+
+      
+
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cauu.online/技术/2018-02-05-iqc-system-development/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Martin Cai">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/my_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Martin's Dean">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">iqc system development</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-05T00:00:00+00:00">2018-02-05</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                <span title="字数统计">10k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                <span title="阅读时长">0:10</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近完成了质检系统第一阶段的开发，在实现的时候，加入了一些新的东西和之前较少用到的特性。总结下来，值得回味的大概有下面这几点：</p>
+<ul>
+<li><p>通过react-router v4实现路由</p>
+</li>
+<li><p>使用<a href="http://2ality.com/2017/01/import-operator.html" target="_blank" rel="noopener">import()函数</a>实现模块的动态加载</p>
+</li>
+<li><p><a href="https://github.com/d6u/react-container-query" target="_blank" rel="noopener">react-container-query</a>实现响应式的布局</p>
+</li>
+<li><p>通过react-url-query实现了对antd form状态管理的优化</p>
+</li>
+<li><p>学习并了解了g2的基本用法</p>
+</li>
+<li><p>实现了一个简单的音频播放器</p>
+</li>
+</ul>
+<p>下面，针对每一个点简单聊聊思路及实现。</p>
+<a id="more"></a>
+<h4 id="1-react-router-v4的使用及模块动态加载的实现"><a href="#1-react-router-v4的使用及模块动态加载的实现" class="headerlink" title="1.  react-router v4的使用及模块动态加载的实现"></a>1.  react-router v4的使用及模块动态加载的实现</h4><p>react-router v4从思路上对老的实现进行了颠覆，彻底贯彻了React模块化的设计思想，每一个Router都可以看作是一个单独的模块，被插入到不同的组件中。举个例子:</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// PageA的url: /page/A</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// PageB的url: /page/B</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 我们定义了组件C的render函数如下:</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">    render() &#123;</span><br><span class="line">      <span class="keyword">return</span> (</span><br><span class="line"></span><br><span class="line">        &lt;div&gt;</span><br><span class="line"></span><br><span class="line">            &lt;<span class="type">Route</span> path=&#123;`$&#123;<span class="keyword">match</span>.url&#125;/<span class="type">C</span>`&#125; component=&#123;<span class="type">C</span>&#125; /&gt;</span><br><span class="line"></span><br><span class="line">        &lt;/div&gt;</span><br><span class="line"></span><br><span class="line">      );</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果组件C被插入到页面A中，那么访问 /page/A/C时，组件C就会被渲染</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果它被插入到B中，同样的，/page/B/C会显示组件C</span></span><br></pre></td></tr></table></figure>
+<p>这样的实现为可插拔的组件和模块的动态加载提供了基础。</p>
+<p>在react-router v4的基础上，结合<a href="https://github.com/dvajs/dva/blob/master/packages/dva/src/dynamic.js" target="_blank" rel="noopener">dva/dynamic</a>实现了模块的动态加载功能。具体实现如下:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> dynamic <span class="keyword">from</span> <span class="string">'dva/dynamic'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> dynamicWrapper = <span class="function">(<span class="params">app, models, component</span>) =&gt;</span> dynamic(&#123;</span><br><span class="line"></span><br><span class="line">  app,</span><br><span class="line"></span><br><span class="line">  models: <span class="function"><span class="params">()</span> =&gt;</span> models.map(<span class="function"><span class="params">m</span> =&gt;</span> <span class="keyword">import</span>(<span class="string">`models/<span class="subst">$&#123;m&#125;</span>.js`</span>)),</span><br><span class="line"></span><br><span class="line">  component,</span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> (app) =&gt; [</span><br><span class="line"></span><br><span class="line">  &#123;</span><br><span class="line"></span><br><span class="line">    component: dynamicWrapper(app, [<span class="string">'user'</span>], <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">import</span>(<span class="string">'layouts/basic'</span>)),</span><br><span class="line"></span><br><span class="line">    layout: <span class="string">'basic'</span>,</span><br><span class="line"></span><br><span class="line">    children: [</span><br><span class="line"></span><br><span class="line">      &#123;</span><br><span class="line"></span><br><span class="line">        name: <span class="string">'首页'</span>,</span><br><span class="line"></span><br><span class="line">        icon: <span class="string">'dashboard'</span>,</span><br><span class="line"></span><br><span class="line">        path: <span class="string">'/'</span>,</span><br><span class="line"></span><br><span class="line">        component: dynamicWrapper(app, [<span class="string">'dashboard'</span>], <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">import</span>(<span class="string">'pages/basic/dashboard'</span>))</span><br><span class="line"></span><br><span class="line">      &#125;,</span><br><span class="line"></span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+<p>dva/dynamic的源码并不复杂，其本质就是基于<a href="http://2ality.com/2017/01/import-operator.html" target="_blank" rel="noopener">import()函数</a>实现的hoc，所以到最后，问题就成了，在最新ES标准中，如何使用import实现模块的动态加载?</p>
+<p>简单来说，dynamic import是ES即将添加的新特性（目前处于stage3阶段），通过dynamic import，我们可以很方便的实现模块的懒加载和按需加载；由于模块的加载是在运行时，我们还可以方便的向其中注入参数。语法<code>import(&#39;module-name.js&#39;)</code>会返回一个promise，模块对象会返回到then方法的回调函数中。关于这部分的应用可以看看<a href="https://github.com/dvajs/dva/blob/master/packages/dva/src/dynamic.js" target="_blank" rel="noopener">dva/dynamic的源码</a>。</p>
+<h4 id="2-通过react-url-query收集antd的表单数据，并映射到url"><a href="#2-通过react-url-query收集antd的表单数据，并映射到url" class="headerlink" title="2.  通过react-url-query收集antd的表单数据，并映射到url"></a>2.  通过react-url-query收集antd的表单数据，并映射到url</h4><p>后台管理系统中，用户经常需要填写复杂的表单，既然是表单，那么undo和redo功能就是必不可少的。在webapp中，我们常见的做法可能是通过redux/dva来管理表单状态，并为用户提供undo/redo的功能，但相比桌面端的软件，网页app又有其特殊性：</p>
+<ol>
+<li><p>用户一旦刷新页面，我们储存在内存中的状态就会丢失，导致用户需要重新填写表单。</p>
+</li>
+<li><p>由于浏览器一般都提供了前进/后退的功能，用户习惯性的会认为通过前进/后退页面就可以回到之前的状态，而这样的操作很容易导致填写的数据丢失。</p>
+</li>
+<li><p>当用户将网页复制给他人时，不能完美的复现用户当前的页面效果。基于这三点，我们考虑将数据储存在url中。</p>
+</li>
+</ol>
+<p>事实上，只要稍加留意，就会发现这个解决方案早已存在于许多网站中，无论是google、百度还是淘宝，在涉及搜索业务时，都采用了这种方式。而这也完美的解决上述的三个痛点，唯一的问题可能就是留下了一串丑陋的url。不过相比于它的便捷性，这点小问题完全可以忍受。</p>
+<p>那么在我们的系统中，我们是如何实现这一功能呢？</p>
+<p>首先它依赖了<a href="https://github.com/pbeshai/react-url-query" target="_blank" rel="noopener">react-url-query</a>，这个库仿照react-redux，实现了一个高阶函数，通过该函数，我们可以将url中的参数自动映射为组件的props，并更新组件，同时我们实现的searchable高阶函数会调用antd的表单方法，获取所有的表单数据；当props更新时，会调用antd-form的setFields函数，为相应的表单域赋值。被searchable封装的组件只需要实现一个onsearch方法，就可以对收集到的表单数据执行相应的操作。</p>
+<p>具体的实现如下（由于业务需要，增加了保存到localstorage的功能）：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> React, &#123; Component &#125; <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> moment <span class="keyword">from</span> <span class="string">'moment'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> _ <span class="keyword">from</span> <span class="string">'lodash'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// import Debounce from 'lodash-decorators/debounce';</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// import Throttle from 'lodash-decorators/throttle';</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> PropTypes <span class="keyword">from</span> <span class="string">'prop-types'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; Form &#125; <span class="keyword">from</span> <span class="string">'antd'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123;</span><br><span class="line"></span><br><span class="line">  addUrlProps,</span><br><span class="line"></span><br><span class="line">  pushUrlQuery</span><br><span class="line"></span><br><span class="line">&#125; <span class="keyword">from</span> <span class="string">'react-url-query'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; Base64 &#125; <span class="keyword">from</span> <span class="string">'js-base64'</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"> * @desc</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"> * props: &#123;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"> *   onSearch: 数据采集完成之后的回调函数，用来处理业务逻辑,</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"> *   onReset: 重置表单之后回调</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"> * &#125;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"> * @todo</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"> * 增加对复杂表单数据的支持</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> (&#123; onValuesChange = <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;, onFieldsChange = <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125; &#125;) =&gt; <span class="function">(<span class="params">WrappedComponent</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">class</span> SearchableTable <span class="keyword">extends</span> Component &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> propTypes = &#123;</span><br><span class="line"></span><br><span class="line">      conditions: PropTypes.object.isRequired,</span><br><span class="line"></span><br><span class="line">      filterValue: PropTypes.array,</span><br><span class="line"></span><br><span class="line">      location: PropTypes.object,</span><br><span class="line"></span><br><span class="line">      history: PropTypes.object,</span><br><span class="line"></span><br><span class="line">      onSearch: PropTypes.func,</span><br><span class="line"></span><br><span class="line">      onReset: PropTypes.func,</span><br><span class="line"></span><br><span class="line">      onCollectData: PropTypes.func</span><br><span class="line"></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> defaultProps = &#123;</span><br><span class="line"></span><br><span class="line">      filterValue: [],</span><br><span class="line"></span><br><span class="line">      conditions: &#123;&#125;</span><br><span class="line"></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">props</span>) &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">super</span>(props);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="keyword">this</span>.state = &#123;</span><br><span class="line"></span><br><span class="line">        dataSource: []</span><br><span class="line"></span><br><span class="line">      &#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="keyword">this</span>.onRefresh = <span class="keyword">this</span>.onRefresh.bind(<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">this</span>.onSearch = <span class="keyword">this</span>.onSearch.bind(<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    componentDidMount() &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">const</span> &#123; conditions &#125; = <span class="keyword">this</span>.props;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="keyword">this</span>.onRefresh(&#123;&#125;, conditions);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="keyword">this</span>.onSearch(&#123;&#125;, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    componentWillReceiveProps(nextProps) &#123;</span><br><span class="line"></span><br><span class="line">      <span class="comment">/**</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">       * @todo</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">       * mapConditionsToUrl后，</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">       * 会触发该方法，导致重复调用api</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">       */</span></span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span>(!_.isEqual(nextProps.conditions, <span class="keyword">this</span>.props.conditions) &amp;&amp; <span class="keyword">this</span>.props.location.search !== nextProps.location.search) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.onRefresh(<span class="keyword">this</span>.props.conditions, nextProps.conditions);</span><br><span class="line"></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    mapQueryToUrl = <span class="function">(<span class="params">searchConditions</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">      pushUrlQuery(&#123; sc: Base64.encode(<span class="built_in">JSON</span>.stringify(searchConditions)) &#125;);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    mapQueryToLocastorage = <span class="function">(<span class="params">searchConditions, saveToHistory = <span class="literal">true</span></span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">const</span> condition = Base64.encode(<span class="built_in">JSON</span>.stringify(&#123; ...searchConditions, createdAt: moment() &#125;));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      localStorage.setItem(<span class="string">'search_recent'</span>, condition);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span>(!saveToHistory) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="keyword">let</span> searchHistory = [];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      _.range(<span class="number">0</span>, <span class="number">3</span>).map(<span class="function">(<span class="params">index</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">const</span> item = localStorage.getItem(<span class="string">`search_<span class="subst">$&#123;index&#125;</span>`</span>);</span><br><span class="line"></span><br><span class="line">        item &amp;&amp; searchHistory.push(item);</span><br><span class="line"></span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span>(searchHistory.length &gt;= <span class="number">3</span>) &#123;</span><br><span class="line"></span><br><span class="line">        searchHistory = searchHistory.slice(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      searchHistory.push(condition);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      searchHistory.forEach(<span class="function">(<span class="params">history, index</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">        localStorage.setItem(<span class="string">`search_<span class="subst">$&#123;index&#125;</span>`</span>, history);</span><br><span class="line"></span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">     * @desc</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">     * 该方法将自动收集url, form、onCollectData和参数中的数据</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">     * 并进行搜索</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"></span><br><span class="line">    onSearch(params = &#123;&#125;, saveToHistory = <span class="literal">true</span>) &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">const</span> &#123; onSearch: search, form, onCollectData, filterValue, conditions &#125; = <span class="keyword">this</span>.props;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="keyword">const</span> searchParam = &#123;&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="keyword">const</span> collected = onCollectData &amp;&amp; onCollectData() || &#123;&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      form.validateFields(<span class="function">(<span class="params">err, data</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(err) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        data = &#123; ...conditions, ...data, ...collected, ...params &#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">const</span> filterUnused = <span class="function">(<span class="params">result</span>) =&gt;</span> (obj) =&gt; <span class="function">(<span class="params">key</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">          <span class="keyword">if</span>(obj.hasOwnProperty(key) &amp;&amp; !!obj[key] &amp;&amp; !filterValue.includes(obj[key])) &#123;</span><br><span class="line"></span><br><span class="line">            result[key] = obj[key];</span><br><span class="line"></span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="built_in">Object</span>.keys(data).map(filterUnused(searchParam)(data));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        search &amp;&amp; search(searchParam);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">         * @hack</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">         * @todo</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">         * 重置form的fields并重新设置（触发initialValue),</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">         * 最好修改为重置的时候变成每个表单的默认值（也就是能取道表单的defaultValue)</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.mapQueryToLocastorage(searchParam, saveToHistory);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.mapQueryToUrl(searchParam);</span><br><span class="line"></span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    onReset = <span class="function">(<span class="params">params = &#123;&#125;, saveToHistory = <span class="literal">false</span></span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">const</span> &#123; form, onReset: reset, onSearch: search &#125; = <span class="keyword">this</span>.props;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      form.resetFields();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      reset &amp;&amp; reset();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      search(params || &#123;&#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="keyword">this</span>.mapQueryToLocastorage(params || &#123;&#125;, saveToHistory);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="keyword">this</span>.mapQueryToUrl(params || &#123;&#125;);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    onRefresh(prevCond, nextCond) &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">const</span> &#123; form &#125; = <span class="keyword">this</span>.props;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="keyword">const</span> merged = <span class="built_in">Object</span>.keys(prevCond).reduce(<span class="function">(<span class="params">acc, prevKey</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(!nextCond[prevKey]) &#123;</span><br><span class="line"></span><br><span class="line">          acc[prevKey] = <span class="string">''</span>;</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line">          acc[prevKey] = nextCond[prevKey];</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> acc;</span><br><span class="line"></span><br><span class="line">      &#125;, &#123; ...prevCond &#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      form.setFieldsValue(&#123; ...nextCond, ...merged &#125;);</span><br><span class="line"></span><br><span class="line">      <span class="comment">/** @todo 更新表单中非form中的内容 */</span></span><br><span class="line"></span><br><span class="line">      <span class="comment">// this.onSearch(&#123; ...nextCond, ...merged &#125;);</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    render() &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">const</span> &#123; form, ...others &#125; = <span class="keyword">this</span>.props;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> (</span><br><span class="line"></span><br><span class="line">        &lt;WrappedComponent</span><br><span class="line"></span><br><span class="line">          &#123;...others&#125;</span><br><span class="line"></span><br><span class="line">          onSearch=&#123;<span class="keyword">this</span>.onSearch&#125;</span><br><span class="line"></span><br><span class="line">          onReset=&#123;<span class="keyword">this</span>.onReset&#125;</span><br><span class="line"></span><br><span class="line">          form=&#123;form&#125;</span><br><span class="line"></span><br><span class="line">          conditions /&gt;</span><br><span class="line"></span><br><span class="line">      );</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> addUrlProps(&#123;</span><br><span class="line"></span><br><span class="line">    mapUrlToProps: <span class="function">(<span class="params">url</span>) =&gt;</span> (&#123; conditions: url.sc &amp;&amp; <span class="built_in">JSON</span>.parse(Base64.decode(url.sc)) || &#123;&#125;  &#125;),</span><br><span class="line"></span><br><span class="line">    mapUrlChangeHandlersToProps: <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">  &#125;)(Form.create(&#123;</span><br><span class="line"></span><br><span class="line">    onValuesChange,</span><br><span class="line"></span><br><span class="line">    onFieldsChange</span><br><span class="line"></span><br><span class="line">  &#125;)(SearchableTable));</span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="3-G2-chart的基本用法"><a href="#3-G2-chart的基本用法" class="headerlink" title="3. G2 chart的基本用法"></a>3. <a href="https://github.com/antvis/g2" target="_blank" rel="noopener">G2 chart</a>的基本用法</h4><p>G2是阿里实现的一个开源绘制图形的库，采用类似于D3的声明式语法，就可以绘制出统计上常用的图表。G2中，绘制一个图形主要分为两部：首先定义它的各个要素的表现形式（包括data, view, legend, axis等），然后调用draw方法即可。关于G2的进一步使用可以参考他们的<a href="https://antv.alipay.com/zh-cn/g2/3.x/api/index.html" target="_blank" rel="noopener">官方文档</a>。</p>
+<h4 id="4-如何实现简单的音频播放器"><a href="#4-如何实现简单的音频播放器" class="headerlink" title="4. 如何实现简单的音频播放器?"></a>4. 如何实现简单的音频播放器?</h4><p>一个可视化的音频播放器需要实现一些基本的功能：</p>
+<ul>
+<li><p>基本的播放、前进、后退、暂停</p>
+</li>
+<li><p>音量控制</p>
+</li>
+<li><p>波形图</p>
+</li>
+</ul>
+<p>h5的audio对象已经为了我们封装了播放、暂停、音量等API，因此，我们只需要获取到原生的audio对象就可以实现对音频的控制。在React中，通过ref可以取得audio对象，接着调用封装的<code>currentTime, duration, volume</code>属性，就可以取得当前音频文件的播放进度、总时间和当前的音量；另一方面，audio的<code>play(), pause()</code>方法提供了播放/暂停功能。基于它们，我们就可以轻松的实现播放器的基础功能了。</p>
+<p>除了上述基础功能，我们还需要实现波形图。</p>
+<p>在实现之前，我们要先问问自己：</p>
+<ul>
+<li><a href="https://www.zhihu.com/question/29712404" target="_blank" rel="noopener">声音的波形和频谱分别是什么？波形图要展示的是什么？</a></li>
+</ul>
+<p>首先，声音是由于空气分子振动产生的，决定我们听到的声音效果主要由两个因素决定：振幅和频率。声音的频率越高，音高越高。振幅越大，音量越大。</p>
+<p>上图表示某个频率下，声音随时间变化的波形图。然而，现实世界中，我们听到的所有声音都是由不只一个频段的声波振动叠加而成，因此，上图这种理想化的图形在实际操纵中是几乎遇不到。在实际生活中，我们常见的关于音频的图形一般有两种：表示音量随时间变化的波形图，和表示各个频率下音量大小的频谱图。</p>
+<p>下面针对两种情况分别聊聊实现的思路：</p>
+<ul>
+<li><a href="http://blog.csdn.net/twobyte/article/details/62043425" target="_blank" rel="noopener">实时波形展示</a></li>
+</ul>
+<p>根据上面的结论，实时的波形更准确的说法应该是声音频谱。在某个时间点，用频率做为我们的横坐标，声音的强度（也就是振幅）做为纵坐标，就可以得到当前时间点各个频段声音的强度图（也就是所谓的频谱）。下图就是音频播放器中的一个典型频谱图。</p>
+<p>很复杂？好在html5的audiocontext对象已经为我们封装了一套API，通过它，我们可以轻松绘制出声音的频谱。具体的实现可以参考<a href="http://blog.csdn.net/twobyte/article/details/62043425" target="_blank" rel="noopener">此处</a></p>
+<ul>
+<li>音频文件波形</li>
+</ul>
+<p>如果横坐标表示时间，纵坐标表示当前时间点声音的大小（也就是振幅），就可以画出一个波形图。通过波形图，可以直观的看到各个时间点音量的相对大小，但无法获得任何关于声音频率的信息。类似与这样：</p>
+<p>对于这种情况，我们首先等待audio对象的load函数执行完成，获得整个音频的数据，接着调用<a href="https://wavesurfer-js.org/" target="_blank" rel="noopener">wavesurfer</a>库封装的方法，就可以得到整个音频文件的波形图。需要注意的是，wavesurfer不能处理跨域的音频文件，因此需要服务端对跨域的文件进行支持。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Martin Cai</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://cauu.online/技术/2018-02-05-iqc-system-development/" title="iqc system development">http://cauu.online/技术/2018-02-05-iqc-system-development/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/react/" rel="tag"># react</a>
+          
+            <a href="/tags/react-router/" rel="tag"># react-router</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/技术/2017-09-26-block--non-block/" rel="next" title="再聊聊阻塞/非阻塞&&同步/异步">
+                <i class="fa fa-chevron-left"></i> 再聊聊阻塞/非阻塞&&同步/异步
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/技术/2018-03-20-Nodejs-block-chain-1/" rel="prev" title="Nodejs撸一个简单的区块链（一）">
+                Nodejs撸一个简单的区块链（一） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/my_avatar.png" alt="Martin Cai">
+            
+              <p class="site-author-name" itemprop="name">Martin Cai</p>
+              <p class="site-description motion-element" itemprop="description">Coding, Travelling, Reading and Enjoying</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                    <span class="site-state-item-count">1</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">26</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/cauu" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:cauu@163.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-react-router-v4的使用及模块动态加载的实现"><span class="nav-number">1.</span> <span class="nav-text">1.  react-router v4的使用及模块动态加载的实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-通过react-url-query收集antd的表单数据，并映射到url"><span class="nav-number">2.</span> <span class="nav-text">2.  通过react-url-query收集antd的表单数据，并映射到url</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-G2-chart的基本用法"><span class="nav-number">3.</span> <span class="nav-text">3. G2 chart的基本用法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-如何实现简单的音频播放器"><span class="nav-number">4.</span> <span class="nav-text">4. 如何实现简单的音频播放器?</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Martin Cai</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">90k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点总阅读时长">1:30</span>
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a> 强力驱动 v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" rel="external nofollow" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/reading_progress/reading_progress.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <script src="/lib/bookmark/bookmark.min.js?v=1.0"></script>
+  <script type="text/javascript">
+  
+    bookmark.scrollToMark('auto', "#more");
+  
+  </script>
+
+
+</body>
+</html>
