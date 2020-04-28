@@ -107,7 +107,7 @@
 <meta property="og:site_name" content="Martin&#39;s Dean">
 <meta property="og:description" content="dom0事件使用onclick添加的事件为dom0事件，同一个元素只能拥有一个dom0事件，后添加的事件会覆盖之前的事件。 1234567891011121314&amp;lt;div id=&quot;test&quot; onclick=&quot;alert(&apos;test&apos;)&quot; /&amp;gt;  //在元素上直接绑定dom0事件&amp;lt;script&amp;gt;    //使用onclick方法添加dom0事件    document.ge">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-01-08T04:33:30.925Z">
+<meta property="og:updated_time" content="2020-04-28T14:37:12.126Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="前端面试题目总结">
 <meta name="twitter:description" content="dom0事件使用onclick添加的事件为dom0事件，同一个元素只能拥有一个dom0事件，后添加的事件会覆盖之前的事件。 1234567891011121314&amp;lt;div id=&quot;test&quot; onclick=&quot;alert(&apos;test&apos;)&quot; /&amp;gt;  //在元素上直接绑定dom0事件&amp;lt;script&amp;gt;    //使用onclick方法添加dom0事件    document.ge">
@@ -238,7 +238,7 @@
   
   <li class="menu-item menu-item-categories menu-item-active">
     <a href="/categories/" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">1</span>
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">2</span>
       </a>
 </li>
 
@@ -249,7 +249,7 @@
   
   <li class="menu-item menu-item-tags">
     <a href="/tags/" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">26</span>
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">28</span>
       </a>
 </li>
 
@@ -431,7 +431,7 @@
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"p"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"c"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> p = <span class="built_in">document</span>.getElementById(<span class="string">'p'</span>),</span></span><br><span class="line"></span><br><span class="line"><span class="javascript">        c = <span class="built_in">document</span>.getElementById(<span class="string">'c'</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">    c.addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>&#123;</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">        alert(<span class="string">'子节点捕获'</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">    &#125;, <span class="literal">true</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">    c.addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>&#123;</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">        alert(<span class="string">'子节点冒泡'</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">    &#125;, <span class="literal">false</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">    p.addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>&#123;    </span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">        alert(<span class="string">'父节点捕获'</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">    &#125;, <span class="literal">true</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">    p.addEventListner(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>&#123;</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">        alert(<span class="string">'父节点冒泡'</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">    &#125;, <span class="literal">false</span>);</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>点击元素，会依次输出<code>父节点捕获-&gt;子节点捕获-&gt;子节点冒泡-&gt;父节点冒泡</code>。</p>
 <h3 id="js事件的三个阶段的理解"><a href="#js事件的三个阶段的理解" class="headerlink" title="js事件的三个阶段的理解"></a>js事件的三个阶段的理解</h3><h3 id="js事件代理-委托"><a href="#js事件代理-委托" class="headerlink" title="js事件代理/委托"></a>js事件代理/委托</h3><p>当我们需要为多个相同层级的子节点添加事件处理函数时，我们可以通过事件冒泡的机制，使用它们共同的父节点来处理这些事件。例子:</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">//对每一个&lt;li&gt;添加事件处理函数</span></span><br><span class="line"></span><br><span class="line">&lt;ul id=<span class="string">"parent-list"</span>&gt;</span><br><span class="line">  &lt;li id=<span class="string">"post-1"</span>&gt;Item <span class="number">1</span>&lt;<span class="regexp">/li&gt;</span></span><br><span class="line"><span class="regexp">  &lt;li id="post-2"&gt;Item 2&lt;/</span>li&gt;</span><br><span class="line">  &lt;li id=<span class="string">"post-3"</span>&gt;Item <span class="number">3</span>&lt;<span class="regexp">/li&gt;</span></span><br><span class="line"><span class="regexp">  &lt;li id="post-4"&gt;Item 4&lt;/</span>li&gt;</span><br><span class="line">  &lt;li id=<span class="string">"post-5"</span>&gt;Item <span class="number">5</span>&lt;<span class="regexp">/li&gt;</span></span><br><span class="line"><span class="regexp">  &lt;li id="post-6"&gt;Item 6&lt;/</span>li&gt;</span><br><span class="line">&lt;<span class="regexp">/ul&gt;</span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/事件代理的写法</span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ 获取父节点，并为它添加一个click事件</span></span><br><span class="line"><span class="regexp">document.getElementById("parent-list").addEventListener("click",function(e) &#123;</span></span><br><span class="line"><span class="regexp">  /</span><span class="regexp">/ 检查事件源e.targe是否为Li</span></span><br><span class="line"><span class="regexp">  if(e.target &amp;&amp; e.target.nodeName.toUpperCase == "LI") &#123;</span></span><br><span class="line"><span class="regexp">    /</span><span class="regexp">/ 真正的处理过程在这里</span></span><br><span class="line"><span class="regexp">    console.log("List item ",e.target.id.replace("post-")," was clicked!");</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;);</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">//对每一个&lt;li&gt;添加事件处理函数</span></span><br><span class="line"></span><br><span class="line">&lt;ul id=<span class="string">"parent-list"</span>&gt;</span><br><span class="line">  &lt;<span class="keyword">li</span> id=<span class="string">"post-1"</span>&gt;Item 1&lt;/<span class="keyword">li</span>&gt;</span><br><span class="line">  &lt;<span class="keyword">li</span> id=<span class="string">"post-2"</span>&gt;Item 2&lt;/<span class="keyword">li</span>&gt;</span><br><span class="line">  &lt;<span class="keyword">li</span> id=<span class="string">"post-3"</span>&gt;Item 3&lt;/<span class="keyword">li</span>&gt;</span><br><span class="line">  &lt;<span class="keyword">li</span> id=<span class="string">"post-4"</span>&gt;Item 4&lt;/<span class="keyword">li</span>&gt;</span><br><span class="line">  &lt;<span class="keyword">li</span> id=<span class="string">"post-5"</span>&gt;Item 5&lt;/<span class="keyword">li</span>&gt;</span><br><span class="line">  &lt;<span class="keyword">li</span> id=<span class="string">"post-6"</span>&gt;Item 6&lt;/<span class="keyword">li</span>&gt;</span><br><span class="line">&lt;/ul&gt;</span><br><span class="line"><span class="comment">//事件代理的写法</span></span><br><span class="line"><span class="comment">// 获取父节点，并为它添加一个click事件</span></span><br><span class="line">document.getElementById(<span class="string">"parent-list"</span>).addEventListener(<span class="string">"click"</span>,function(<span class="keyword">e</span>) &#123;</span><br><span class="line">  <span class="comment">// 检查事件源e.targe是否为Li</span></span><br><span class="line">  <span class="keyword">if</span>(<span class="keyword">e</span>.target &amp;&amp; <span class="keyword">e</span>.target.nodeName.toUpperCase == <span class="string">"LI"</span>) &#123;</span><br><span class="line">    <span class="comment">// 真正的处理过程在这里</span></span><br><span class="line">    console.<span class="built_in">log</span>(<span class="string">"List item "</span>,<span class="keyword">e</span>.target.id.<span class="keyword">replace</span>(<span class="string">"post-"</span>),<span class="string">" was clicked!"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <h3 id="前端性能优化"><a href="#前端性能优化" class="headerlink" title="前端性能优化"></a>前端性能优化</h3><ul>
 <li><p>减少http请求（包括合并js文件、css文件、图片）</p>
 </li>
@@ -634,7 +634,7 @@
                 
                   <a href="/archives">
                 
-                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-count">24</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -649,7 +649,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">1</span>
+                      
+                    
+                    <span class="site-state-item-count">2</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -714,7 +716,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">26</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">28</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -803,7 +809,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">90k</span>
+    <span title="站点总字数">91k</span>
   
 
   
@@ -812,7 +818,7 @@
       <i class="fa fa-coffee"></i>
     </span>
     
-    <span title="站点总阅读时长">1:30</span>
+    <span title="站点总阅读时长">1:31</span>
   
 </div>
 

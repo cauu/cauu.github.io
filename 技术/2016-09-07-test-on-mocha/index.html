@@ -107,7 +107,7 @@
 <meta property="og:site_name" content="Martin&#39;s Dean">
 <meta property="og:description" content="什么是MochaMocha是一个简单灵活的javascript测试框架，用于nodejs和浏览器上的javascript应用测试。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-01-08T04:33:30.925Z">
+<meta property="og:updated_time" content="2020-04-28T14:37:12.126Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Mocha单元测试入门">
 <meta name="twitter:description" content="什么是MochaMocha是一个简单灵活的javascript测试框架，用于nodejs和浏览器上的javascript应用测试。">
@@ -238,7 +238,7 @@
   
   <li class="menu-item menu-item-categories menu-item-active">
     <a href="/categories/" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">1</span>
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">2</span>
       </a>
 </li>
 
@@ -249,7 +249,7 @@
   
   <li class="menu-item menu-item-tags">
     <a href="/tags/" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">26</span>
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">28</span>
       </a>
 </li>
 
@@ -453,7 +453,7 @@
 <h3 id="测试React组件"><a href="#测试React组件" class="headerlink" title="测试React组件"></a>测试React组件</h3><p>由于React页面使用jsx模板语言进行渲染，因此，如同所有的动态网站测试，我们可以等待网页渲染完成之后再对其组件进行测试。然而，React还存在一个独一无二的概念：VirtualDOM，因此，如果我们的测试用例不涉及和真实DOM的交互，我们完全可以通过VirtualDOM测试DOM中的内容即可。<br>基于这两种情况，react官方为我们提供了相应的测试工具库：react-addons-test-utils。还是通过例子来说明其用法。<br>首先实现一个简单的React Component Title:</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//./Title.jsx</span></span><br><span class="line"><span class="keyword">import</span> <span class="type">React</span> from <span class="symbol">'reac</span>t';</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Title</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  constructor(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line">  &#125;</span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        &lt;div&gt;<span class="type">This</span> is a <span class="type">Title</span>&lt;/div&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">export <span class="keyword">default</span> <span class="type">Title</span>;</span><br></pre></td></tr></table></figure>
 <p>接着引入官方测试工具集，之后我们会在测试用例中用到该方法:</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//./test/utils.js</span></span><br><span class="line"><span class="keyword">import</span> TestUtils <span class="keyword">from</span> <span class="string">'react-addons-test-utils'</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">shallowRender</span>(<span class="params">Component, props</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> renderer = TestUtiles.createRenderer();</span><br><span class="line">    renderer.render(<span class="xml"><span class="tag">&lt;<span class="name">Component</span> &#123;<span class="attr">...props</span>&#125; /&gt;</span>);</span></span><br><span class="line"><span class="xml">    return renderer.getRenderOutput(); </span></span><br><span class="line"><span class="xml">&#125;</span></span><br><span class="line"><span class="xml">export.shallow = shallowRender;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//./test/utils.js</span></span><br><span class="line"><span class="keyword">import</span> TestUtils <span class="keyword">from</span> <span class="string">'react-addons-test-utils'</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">shallowRender</span>(<span class="params">Component, props</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> renderer = TestUtiles.createRenderer();</span><br><span class="line">    renderer.render(<span class="xml"><span class="tag">&lt;<span class="name">Component</span> &#123;<span class="attr">...props</span>&#125; /&gt;</span></span>);</span><br><span class="line">    <span class="keyword">return</span> renderer.getRenderOutput(); </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span>.shallow = shallowRender;</span><br></pre></td></tr></table></figure>
 <p>在./test目录下添加相应的测试用例title.test.js:</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Title <span class="keyword">from</span> <span class="string">'../Title.jsx'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; shallow &#125; <span class="keyword">from</span> <span class="string">'./utils.js'</span>;</span><br><span class="line"><span class="keyword">import</span> should <span class="keyword">from</span> <span class="string">'should'</span>;</span><br><span class="line"></span><br><span class="line">describe(<span class="string">'虚拟DOM渲染测试'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;(</span><br><span class="line">)    it(<span class="string">'Title的标题'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">const</span> app = shallow(Title);</span><br><span class="line">        app.props.children[<span class="number">0</span>].props.children.should.be.equal(<span class="string">'This is a Title'</span>);</span><br><span class="line">     )&#125;;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>这样我们就实现对虚拟DOM的测试。</p>
@@ -599,7 +599,7 @@
                 
                   <a href="/archives">
                 
-                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-count">24</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -614,7 +614,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">1</span>
+                      
+                    
+                    <span class="site-state-item-count">2</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -679,7 +681,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">26</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">28</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -768,7 +774,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
     
-    <span title="站点总字数">90k</span>
+    <span title="站点总字数">91k</span>
   
 
   
@@ -777,7 +783,7 @@
       <i class="fa fa-coffee"></i>
     </span>
     
-    <span title="站点总阅读时长">1:30</span>
+    <span title="站点总阅读时长">1:31</span>
   
 </div>
 
